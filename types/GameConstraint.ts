@@ -7,12 +7,12 @@ export class GameConstraint {
       public imageAltText: string = ''
     ) {}
   }
-  
+
   export enum ConstraintType {
     Rarity,
     Type,
     ManaValue,
     Color,
     Set,
+    __LENGTH
   }
-  

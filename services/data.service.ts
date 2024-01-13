@@ -31,7 +31,7 @@ export class DataService {
     const year = parseInt(dateString.substring(0, 4));
     const month = parseInt(dateString.substring(4, 6));
     const day = parseInt(dateString.substring(6));
-    console.log(`year: ${year}, month: ${month}, day: ${day}`)
+
     return new Date(`${month + 1}/${day}/${year}`);
   }
 }

@@ -1,18 +1,12 @@
 import { DataService } from "./data.service";
-import { prismaMock } from "../__mocks__/client";
+import { prismaMock } from "../__mocks__/databaseClient"
 import { expect, test, describe } from "vitest";
 import { Game } from "@prisma/client";
-import { before } from "node:test";
 
 const invalidDateStrings = [
   { invalidDateString: "" },
   { invalidDateString: "0123456" },
   { invalidDateString: "012345678" },
-];
-
-const validDateStringsWithExpectedDate:{dateString: string, expected: Date}[] = [
-  { dateString: "19841131", expected: new Date("12/31/1984") },
-  { dateString: "19840001", expected: new Date("01/01/1984") },
 ];
 
 const games: Game[] = [
@@ -59,9 +53,11 @@ describe("Data Service", () => {
       );
     });
 
-    test.each(validDateStringsWithExpectedDate)("($dateString) -> $expected", (testCase) => {
-      const date = dataService.dateStringToDate(testCase.dateString);
-      expect(date?.toDateString()).toBe(testCase.expected.toDateString());
+    test('should return expected datetime for valid string', () => {
+      const dateOne = dataService.dateStringToDate('19841131');
+      expect(dateOne!.toDateString()).toBe(new Date("12/31/1984").toDateString());
+      const dateTwo = dataService.dateStringToDate('19840001');
+      expect(dateTwo!.toDateString()).toBe(new Date("01/01/1984").toDateString());
     });
 
   });

@@ -2,10 +2,10 @@ import { PrismaClient } from '@prisma/client'
 import { mockDeep, mockReset, DeepMockProxy } from 'vitest-mock-extended'
 import { vi } from 'vitest'
 
-import prisma from '../data/client'
+import prisma from '../data/databaseClient'
 import { beforeEach } from 'node:test'
 
-vi.mock('../data/client', () => ({
+vi.mock('../data/databaseClient', () => ({
   __esModule: true,
   default: mockDeep<PrismaClient>(),
 }))
