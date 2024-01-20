@@ -1,4 +1,3 @@
-import { Game } from "scryfall-sdk";
 import { GameConstraint, ConstraintType } from "../types/GameConstraint";
 
 const cardTypes = [
@@ -46,7 +45,7 @@ const creatureRaceTypes = [
   "Bear",
   "Spider",
   "God",
-  "Bird"
+  "Bird",
 ];
 
 const creatureJobTypes = [
@@ -60,7 +59,7 @@ const creatureJobTypes = [
   "Knight",
   "Pirate",
   "Ninja",
-  "Shaman"
+  "Shaman",
 ];
 
 export const cardTypeConstraints: GameConstraint[] = cardTypes.map(
@@ -70,23 +69,40 @@ export const cardTypeConstraints: GameConstraint[] = cardTypes.map(
 
 export const creatureRaceConstraints: GameConstraint[] = creatureRaceTypes.map(
   (cardType) =>
-    new GameConstraint(cardType, ConstraintType.CreatureRaceTypes, `t:${cardType}`)
+    new GameConstraint(
+      cardType,
+      ConstraintType.CreatureRaceTypes,
+      `t:${cardType}`
+    )
 );
 
 export const creatureJobConstraints: GameConstraint[] = creatureJobTypes.map(
   (cardType) =>
-    new GameConstraint(cardType, ConstraintType.CreatureJobTypes, `t:${cardType}`)
+    new GameConstraint(
+      cardType,
+      ConstraintType.CreatureJobTypes,
+      `t:${cardType}`
+    )
 );
 
 export const artifactSubtypesConstraints: GameConstraint[] = artifactTypes.map(
   (cardType) =>
-    new GameConstraint(cardType, ConstraintType.ArtifactSubtypes, `t:${cardType}`)
+    new GameConstraint(
+      cardType,
+      ConstraintType.ArtifactSubtypes,
+      `t:${cardType}`
+    )
 );
 
-export const enchantmentSubtypeTypeConstraints: GameConstraint[] = enchantmentTypes.map(
-  (cardType) =>
-    new GameConstraint(cardType, ConstraintType.EnchantmentSubtypes, `t:${cardType}`)
-);
+export const enchantmentSubtypeTypeConstraints: GameConstraint[] =
+  enchantmentTypes.map(
+    (cardType) =>
+      new GameConstraint(
+        cardType,
+        ConstraintType.EnchantmentSubtypes,
+        `t:${cardType}`
+      )
+  );
 
 export const rarityConstraints: GameConstraint[] = [
   new GameConstraint("Mythic", ConstraintType.Rarity, "r:m"),

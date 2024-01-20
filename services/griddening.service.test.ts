@@ -1,4 +1,4 @@
-import { expect, test, describe, vi } from "vitest";
+import { expect, test, describe } from "vitest";
 import { GriddeningService } from "./griddening.service";
 import { ConstraintType, GameConstraint } from "../types/GameConstraint";
 import * as Scry from "scryfall-sdk";
@@ -15,7 +15,7 @@ import {
   expectedSetOutputs,
 } from "../testUtilities/consts/griddening.testconstants";
 
-let scryfallServiceMock = new ScryfallMockedService();
+const scryfallServiceMock = new ScryfallMockedService();
 const griddeningService = new GriddeningService(scryfallServiceMock);
 
 describe("Griddening Service", () => {

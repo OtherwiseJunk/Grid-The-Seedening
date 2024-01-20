@@ -4,7 +4,7 @@ import { GameConstraint } from "../types/GameConstraint";
 export class DataService {
   constructor(private prisma: PrismaClient) {}
 
-  async getDateOfNewestGame(): Promise<Date|undefined> {
+  async getDateOfNewestGame(): Promise<Date | undefined> {
     const games = await this.prisma.game.findMany();
 
     if (games === undefined) return games;
@@ -16,17 +16,20 @@ export class DataService {
     return this.dateStringToDate(latestGame.dateString);
   }
 
-  async createNewGame(dateString: string, validGameConstraints: GameConstraint[]): Promise<Game | undefined> {
+  async createNewGame(
+    dateString: string,
+    validGameConstraints: GameConstraint[]
+  ): Promise<Game | undefined> {
     return await this.prisma.game.create({
       data: {
         dateString,
-        constraintsJSON: JSON.stringify(validGameConstraints)
-      }
+        constraintsJSON: JSON.stringify(validGameConstraints),
+      },
     });
   }
 
-  dateStringToDate(dateString: string): Date|undefined {
-    if(dateString == null || dateString.length != 8) return undefined;
+  dateStringToDate(dateString: string): Date | undefined {
+    if (dateString == null || dateString.length != 8) return undefined;
 
     const year = parseInt(dateString.substring(0, 4));
     const month = parseInt(dateString.substring(4, 6));

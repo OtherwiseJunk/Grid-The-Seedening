@@ -1,6 +1,6 @@
 import { GameConstraint, ConstraintType } from "../../types/GameConstraint";
 import { ScryfallHelper } from "../scryfall.helper";
-import * as Scry from 'scryfall-sdk';
+import * as Scry from "scryfall-sdk";
 
 const vintageSet: Scry.Set = ScryfallHelper.generateScryfallSet(
   "1993-01-01",
@@ -32,16 +32,10 @@ export const firstPioneerSet: Scry.Set = ScryfallHelper.generateScryfallSet(
   "Ravnica I think",
   "RTR"
 );
-export const dayAfterFirstPioneerSet: Scry.Set = ScryfallHelper.generateScryfallSet(
-  "2012-10-04",
-  "not a set",
-  "nas"
-);
-export const dayBeforeFirstPioneerSet: Scry.Set = ScryfallHelper.generateScryfallSet(
-  "2012-10-06",
-  "not a set",
-  "nas"
-);
+export const dayAfterFirstPioneerSet: Scry.Set =
+  ScryfallHelper.generateScryfallSet("2012-10-04", "not a set", "nas");
+export const dayBeforeFirstPioneerSet: Scry.Set =
+  ScryfallHelper.generateScryfallSet("2012-10-06", "not a set", "nas");
 export const dayBefore2013Set: Scry.Set = ScryfallHelper.generateScryfallSet(
   "2012-12-31",
   "not a set",

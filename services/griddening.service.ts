@@ -1,11 +1,25 @@
-import { colorConstraints, creatureRulesText as creatureRulesTextConstraints, manaValueConstraints, powerConstraints, rarityConstraints, toughnessConstraints, cardTypeConstraints, creatureRaceConstraints, creatureJobConstraints, enchantmentSubtypeTypeConstraints, artifactSubtypesConstraints } from "../constants/constraintTypes";
+import {
+  colorConstraints,
+  creatureRulesText as creatureRulesTextConstraints,
+  manaValueConstraints,
+  powerConstraints,
+  rarityConstraints,
+  toughnessConstraints,
+  cardTypeConstraints,
+  creatureRaceConstraints,
+  creatureJobConstraints,
+  enchantmentSubtypeTypeConstraints,
+  artifactSubtypesConstraints,
+} from "../constants/constraintTypes";
 import { ConstraintType, GameConstraint } from "../types/GameConstraint";
 import * as Scry from "scryfall-sdk";
 import { IScryfallService } from "./scryfall.service";
 
 export class GriddeningService {
-  constructor(private scryfallService: IScryfallService) { }
-  minimumHits = process.env.MINIMUM_HITS ? parseInt(process.env.MINIMUM_HITS) : 10;
+  constructor(private scryfallService: IScryfallService) {}
+  minimumHits = process.env.MINIMUM_HITS
+    ? parseInt(process.env.MINIMUM_HITS)
+    : 10;
 
   async createConstraintDeck(): Promise<Map<ConstraintType, GameConstraint[]>> {
     const setConstraints = this.shuffleArray(await this.getSetConstraints());
@@ -19,11 +33,26 @@ export class GriddeningService {
       [ConstraintType.Power, this.shuffleArray(powerConstraints)],
       [ConstraintType.Toughness, this.shuffleArray(toughnessConstraints)],
       [ConstraintType.Artist, this.shuffleArray(toughnessConstraints)],
-      [ConstraintType.CreatureRulesText, this.shuffleArray(creatureRulesTextConstraints)],
-      [ConstraintType.CreatureRaceTypes, this.shuffleArray(creatureRaceConstraints)],
-      [ConstraintType.CreatureJobTypes, this.shuffleArray(creatureJobConstraints)],
-      [ConstraintType.EnchantmentSubtypes, this.shuffleArray(enchantmentSubtypeTypeConstraints)],
-      [ConstraintType.ArtifactSubtypes, this.shuffleArray(artifactSubtypesConstraints)]
+      [
+        ConstraintType.CreatureRulesText,
+        this.shuffleArray(creatureRulesTextConstraints),
+      ],
+      [
+        ConstraintType.CreatureRaceTypes,
+        this.shuffleArray(creatureRaceConstraints),
+      ],
+      [
+        ConstraintType.CreatureJobTypes,
+        this.shuffleArray(creatureJobConstraints),
+      ],
+      [
+        ConstraintType.EnchantmentSubtypes,
+        this.shuffleArray(enchantmentSubtypeTypeConstraints),
+      ],
+      [
+        ConstraintType.ArtifactSubtypes,
+        this.shuffleArray(artifactSubtypesConstraints),
+      ],
     ]);
   }
 
@@ -66,7 +95,7 @@ export class GriddeningService {
         .replace("Ninth Edition", "9th Edition")
         .replace("Tenth Edition", "10th Edition")
         .trim();
-    }
+    };
     if (!["core", "expansion"].includes(set.set_type)) return set;
 
     set.name = sanitizeSetName(set.name);
@@ -93,6 +122,7 @@ export class GriddeningService {
   async selectValidConstraints(
     constraintMap: Map<ConstraintType, GameConstraint[]>
   ): Promise<GameConstraint[]> {
+    console.log(constraintMap);
     return [];
   }
 
@@ -109,11 +139,9 @@ export class GriddeningService {
     gameConstraintOne: GameConstraint,
     gameConstraintTwo: GameConstraint
   ): Promise<boolean> {
-    const query = `${gameConstraintOne.scryfallQuery} ${gameConstraintTwo.scryfallQuery}`
-    const cardCount = await this.scryfallService.getFirstPageCardCount(query)
-    return (
-      cardCount >= this.minimumHits
-    )
+    const query = `${gameConstraintOne.scryfallQuery} ${gameConstraintTwo.scryfallQuery}`;
+    const cardCount = await this.scryfallService.getFirstPageCardCount(query);
+    return cardCount >= this.minimumHits;
   }
 
   private addDays(dateToAddTo: Date, days: number): Date {
