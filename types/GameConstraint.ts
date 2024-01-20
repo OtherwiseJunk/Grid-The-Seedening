@@ -30,5 +30,5 @@ export enum PuzzleType {
   Colorless,
   TwoColors,
   FourColors,
-  ArtifactFocused
+  ArtifactFocused,
 }

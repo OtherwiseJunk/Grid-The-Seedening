@@ -1,4 +1,4 @@
-import * as Scry from 'scryfall-sdk';
+import * as Scry from "scryfall-sdk";
 
 const scry = Scry;
 
