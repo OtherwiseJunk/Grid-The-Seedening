@@ -80,25 +80,22 @@ export class GriddeningService {
   }
 
   sanitizeSet(set: Scry.Set): Scry.Set {
-    const sanitizeSetName = (setName: string): string => {
-      return setName
-        .replace("Foreign Black Border", "")
-        .replace("Limited Edition Alpha", "Alpha")
-        .replace("Limited Edition Beta", "Beta")
-        .replace("Unlimited Edition", "Unlimited")
-        .replace("Revised Edition", "Revised")
-        .replace("Fourth Edition", "4th Edition")
-        .replace("Fifth Edition", "5th Edition")
-        .replace("Classic Sixth Edition", "6th Edition")
-        .replace("Seventh Edition", "7th Edition")
-        .replace("Eighth Edition", "8th Edition")
-        .replace("Ninth Edition", "9th Edition")
-        .replace("Tenth Edition", "10th Edition")
-        .trim();
-    };
     if (!["core", "expansion"].includes(set.set_type)) return set;
 
-    set.name = sanitizeSetName(set.name);
+    set.name = set.name
+      .replace("Foreign Black Border", "")
+      .replace("Limited Edition Alpha", "Alpha")
+      .replace("Limited Edition Beta", "Beta")
+      .replace("Unlimited Edition", "Unlimited")
+      .replace("Revised Edition", "Revised")
+      .replace("Fourth Edition", "4th Edition")
+      .replace("Fifth Edition", "5th Edition")
+      .replace("Classic Sixth Edition", "6th Edition")
+      .replace("Seventh Edition", "7th Edition")
+      .replace("Eighth Edition", "8th Edition")
+      .replace("Ninth Edition", "9th Edition")
+      .replace("Tenth Edition", "10th Edition")
+      .trim();
 
     return set;
   }
