@@ -1,4 +1,4 @@
-import { colorConstraints, manaValueConstraints, rarityConstraints, typeConstraints } from "../constants/constraintTypes";
+import { colorConstraints, creatureRulesText as creatureRulesTextConstraints, manaValueConstraints, powerConstraints, rarityConstraints, toughnessConstraints, cardTypeConstraints, creatureRaceConstraints, creatureJobConstraints, enchantmentSubtypeTypeConstraints, artifactSubtypesConstraints } from "../constants/constraintTypes";
 import { ConstraintType, GameConstraint } from "../types/GameConstraint";
 import * as Scry from "scryfall-sdk";
 
@@ -13,7 +13,15 @@ export class GriddeningService {
       [ConstraintType.Color, this.shuffleArray(colorConstraints)],
       [ConstraintType.ManaValue, this.shuffleArray(manaValueConstraints)],
       [ConstraintType.Rarity, this.shuffleArray(rarityConstraints)],
-      [ConstraintType.Type, this.shuffleArray(typeConstraints)],
+      [ConstraintType.Type, this.shuffleArray(cardTypeConstraints)],
+      [ConstraintType.Power, this.shuffleArray(powerConstraints)],
+      [ConstraintType.Toughness, this.shuffleArray(toughnessConstraints)],
+      [ConstraintType.Artist, this.shuffleArray(toughnessConstraints)],
+      [ConstraintType.CreatureRulesText, this.shuffleArray(creatureRulesTextConstraints)],
+      [ConstraintType.CreatureRaceTypes, this.shuffleArray(creatureRaceConstraints)],
+      [ConstraintType.CreatureJobTypes, this.shuffleArray(creatureJobConstraints)],
+      [ConstraintType.EnchantmentSubtypes, this.shuffleArray(enchantmentSubtypeTypeConstraints)],
+      [ConstraintType.ArtifactSubtypes, this.shuffleArray(artifactSubtypesConstraints)]
     ]);
   }
 

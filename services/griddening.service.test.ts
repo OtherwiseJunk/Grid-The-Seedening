@@ -348,4 +348,8 @@ describe("Griddening Service", () => {
       expect(setConstraints.length).toBe(expectedSetOutputs.length);
     });
   });
+
+  describe("intersectionHasMinimumHits", () =>{
+    test('')
+  });
 });
