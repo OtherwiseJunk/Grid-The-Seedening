@@ -1,9 +1,11 @@
 import { colorConstraints, creatureRulesText as creatureRulesTextConstraints, manaValueConstraints, powerConstraints, rarityConstraints, toughnessConstraints, cardTypeConstraints, creatureRaceConstraints, creatureJobConstraints, enchantmentSubtypeTypeConstraints, artifactSubtypesConstraints } from "../constants/constraintTypes";
 import { ConstraintType, GameConstraint } from "../types/GameConstraint";
 import * as Scry from "scryfall-sdk";
+import { IScryfallService } from "./scryfall.service";
 
 export class GriddeningService {
-  constructor(private scry) {}
+  constructor(private scryfallService: IScryfallService) { }
+  minimumHits = process.env.MINIMUM_HITS ? parseInt(process.env.MINIMUM_HITS) : 10;
 
   async createConstraintDeck(): Promise<Map<ConstraintType, GameConstraint[]>> {
     const setConstraints = this.shuffleArray(await this.getSetConstraints());
@@ -35,25 +37,8 @@ export class GriddeningService {
     return array;
   }
 
-  sanitizeSetName(setName: string): string {
-    return setName
-      .replace("Foreign Black Border", "")
-      .replace("Limited Edition Alpha", "Alpha")
-      .replace("Limited Edition Beta", "Beta")
-      .replace("Unlimited Edition", "Unlimited")
-      .replace("Revised Edition", "Revised")
-      .replace("Fourth Edition", "4th Edition")
-      .replace("Fifth Edition", "5th Edition")
-      .replace("Classic Sixth Edition", "6th Edition")
-      .replace("Seventh Edition", "7th Edition")
-      .replace("Eighth Edition", "8th Edition")
-      .replace("Ninth Edition", "9th Edition")
-      .replace("Tenth Edition", "10th Edition")
-      .trim();
-  }
-
   isPioneerSet(set: Scry.Set) {
-    if(set.released_at == undefined) return false;
+    if (set.released_at == undefined) return false;
 
     const releaseYear = parseInt(set.released_at.split("-")[0]);
     if (releaseYear > 2012) {
@@ -65,14 +50,26 @@ export class GriddeningService {
     return false;
   }
 
-  sanitizeSet(set: Scry.Set, sanitizeSetName: (setName: string) => string) {
-    if (!["core", "expansion"].includes(set.set_type)) return;
+  sanitizeSet(set: Scry.Set): Scry.Set {
+    const sanitizeSetName = (setName: string): string => {
+      return setName
+        .replace("Foreign Black Border", "")
+        .replace("Limited Edition Alpha", "Alpha")
+        .replace("Limited Edition Beta", "Beta")
+        .replace("Unlimited Edition", "Unlimited")
+        .replace("Revised Edition", "Revised")
+        .replace("Fourth Edition", "4th Edition")
+        .replace("Fifth Edition", "5th Edition")
+        .replace("Classic Sixth Edition", "6th Edition")
+        .replace("Seventh Edition", "7th Edition")
+        .replace("Eighth Edition", "8th Edition")
+        .replace("Ninth Edition", "9th Edition")
+        .replace("Tenth Edition", "10th Edition")
+        .trim();
+    }
+    if (!["core", "expansion"].includes(set.set_type)) return set;
 
-    const santizedName = sanitizeSetName(set.name);
-
-    if (santizedName.length === 0) return;
-
-    set.name = santizedName;
+    set.name = sanitizeSetName(set.name);
 
     return set;
   }
@@ -82,10 +79,13 @@ export class GriddeningService {
   }
 
   async getSetConstraints(): Promise<GameConstraint[]> {
-    const sets = await this.scry.Sets.all();
+    let sets = await this.scryfallService.getAllSets();
+
+    if (sets == undefined) return [];
+    sets = sets.filter((set) => set != undefined);
 
     return sets
-      .map((set) => this.sanitizeSet(set, this.sanitizeSetName))
+      .map((set) => this.sanitizeSet(set))
       .filter(this.isPioneerSet)
       .map(this.buildSetConstraintFromScryfallSet);
   }
@@ -103,6 +103,17 @@ export class GriddeningService {
       .getMonth()
       .toString()
       .padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}`;
+  }
+
+  async intersectionHasMinimumHits(
+    gameConstraintOne: GameConstraint,
+    gameConstraintTwo: GameConstraint
+  ): Promise<boolean> {
+    const query = `${gameConstraintOne.scryfallQuery} ${gameConstraintTwo.scryfallQuery}`
+    const cardCount = await this.scryfallService.getFirstPageCardCount(query)
+    return (
+      cardCount >= this.minimumHits
+    )
   }
 
   private addDays(dateToAddTo: Date, days: number): Date {

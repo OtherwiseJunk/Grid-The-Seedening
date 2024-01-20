@@ -1,12 +1,10 @@
-import { scryMock } from "./../__mocks__/scryfallClient";
 import { expect, test, describe, vi } from "vitest";
 import { GriddeningService } from "./griddening.service";
 import { ConstraintType, GameConstraint } from "../types/GameConstraint";
 import * as Scry from "scryfall-sdk";
-import { mockDeep } from "vitest-mock-extended";
-import { MagicArray } from "scryfall-sdk/out/util/MagicEmitter";
 import { ScryfallHelper } from "../testUtilities/scryfall.helper";
-import { Game } from "@prisma/client";
+import { IScryfallService, ScryfallService } from "./scryfall.service";
+import { ScryfallMockedService } from "../__mocks__/scryfall.service";
 
 const vintageSet: Scry.Set = ScryfallHelper.generateScryfallSet(
   "1993-01-01",
@@ -231,15 +229,13 @@ const namesToSanitizeWithExpectedResult = [
   [" Set With Whitespace ", "Set With Whitespace"],
   ["OtherwiseUneditedEdition", "OtherwiseUneditedEdition"],
 ];
-
-const griddeningService = new GriddeningService(scryMock);
+let scryfallServiceMock = new ScryfallMockedService();
+const griddeningService = new GriddeningService(scryfallServiceMock);
 
 describe("Griddening Service", () => {
   describe("createConstraintDeck", () => {
     test("returns map of constraint arrays for each Contraint Type", async () => {
-      scryMock.Sets.all.mockReturnValue(
-        Promise.resolve([pioneerSet, standardSet])
-      );
+      scryfallServiceMock.setAllSets([pioneerSet, standardSet]);
 
       const mapConstraintDecks = await griddeningService.createConstraintDeck();
       expect(mapConstraintDecks.size).toBe(ConstraintType.__LENGTH);
@@ -250,15 +246,6 @@ describe("Griddening Service", () => {
     test("", () => {
       expect(true).toBeTruthy();
     });
-  });
-
-  describe("santizeSetName", () => {
-    test.each(namesToSanitizeWithExpectedResult)(
-      "(%s) -> %s",
-      (setName, expectedOutput) => {
-        expect(griddeningService.sanitizeSetName(setName)).toBe(expectedOutput);
-      }
-    );
   });
 
   describe("isPioneerSet", () => {
@@ -275,7 +262,7 @@ describe("Griddening Service", () => {
 
   describe("sanitizeSet", () => {
     test.each(setTypesToFilter)(
-      "(set.setType === %s) -> undefined",
+      "(set.setType === %s) -> unmodified set name",
       (setType) => {
         const filteredScryfallSet = ScryfallHelper.generateScryfallSet(
           "1993-01-01",
@@ -285,10 +272,9 @@ describe("Griddening Service", () => {
         );
         expect(
           griddeningService.sanitizeSet(
-            filteredScryfallSet,
-            griddeningService.sanitizeSetName
-          )
-        ).toBeUndefined();
+            filteredScryfallSet
+          ).name
+        ).toBe(filteredScryfallSet.name);
       }
     );
     test.each(namesToSanitizeWithExpectedResult)(
@@ -300,8 +286,7 @@ describe("Griddening Service", () => {
           "f"
         );
         const outputSet = griddeningService.sanitizeSet(
-          scryfallSet,
-          griddeningService.sanitizeSetName
+          scryfallSet
         );
 
         if (outputSet == undefined) {
@@ -338,10 +323,8 @@ describe("Griddening Service", () => {
   });
 
   describe("getSetConstraints", () => {
-    test('should return qualifying pioneer set constraints', async () =>{
-      scryMock.Sets.all.mockReturnValue(
-        Promise.resolve(setInputs)
-      );
+    test('should return qualifying pioneer set constraints', async () => {
+      scryfallServiceMock.setAllSets(setInputs);
 
       const setConstraints = await griddeningService.getSetConstraints();
 
@@ -349,7 +332,28 @@ describe("Griddening Service", () => {
     });
   });
 
-  describe("intersectionHasMinimumHits", () =>{
-    test('')
+  describe("intersectionHasMinimumHits", () => {
+    const fakeConstraint = new GameConstraint('', ConstraintType.Set, '');
+
+    test('returns true when intersection has 10 or more hits when no MINIMUM_HITS environment varaible is set', async () => {
+      scryfallServiceMock.setHitCount(10);
+      expect(await griddeningService.intersectionHasMinimumHits(fakeConstraint, fakeConstraint)).toBeTruthy();
+    });
+    test('returns false when intersection has less than 10 hits when no MINIMUM_HITS environment varaible is set', async () => {
+      scryfallServiceMock.setHitCount(9);
+      expect(await griddeningService.intersectionHasMinimumHits(fakeConstraint, fakeConstraint)).toBeFalsy();
+    });
+    test('returns true when intersection has process.env.MINIMUM_HITS or more hits', async () => {
+      scryfallServiceMock.setHitCount(7);
+      process.env.MINIMUM_HITS = '7';
+      const service = new GriddeningService(scryfallServiceMock);
+      expect(await service.intersectionHasMinimumHits(fakeConstraint, fakeConstraint)).toBeTruthy();
+    });
+    test('returns false when intersection has less than process.env.MINIMUM_HITS hits', async () => {
+      scryfallServiceMock.setHitCount(6);
+      process.env.MINIMUM_HITS = '7';
+      const service = new GriddeningService(scryfallServiceMock);
+      expect(await service.intersectionHasMinimumHits(fakeConstraint, fakeConstraint)).toBeFalsy();
+    });
   });
 });
