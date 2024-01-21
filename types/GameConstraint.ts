@@ -24,11 +24,3 @@ export enum ConstraintType {
   EnchantmentSubtypes,
   __LENGTH,
 }
-
-export enum PuzzleType {
-  CreatureFocused,
-  Colorless,
-  TwoColors,
-  FourColors,
-  ArtifactFocused,
-}

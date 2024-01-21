@@ -1,4 +1,4 @@
-import { expect, test, describe } from "vitest";
+import { expect, test, describe, beforeEach } from "vitest";
 import { GriddeningService } from "./griddening.service";
 import { ConstraintType, GameConstraint } from "../types/GameConstraint";
 import * as Scry from "scryfall-sdk";
@@ -14,6 +14,8 @@ import {
   setInputs,
   expectedSetOutputs,
 } from "../testUtilities/consts/griddening.testconstants";
+import { PuzzleType } from "../types/Puzzle";
+import { cloneMapOfDecks } from "../testUtilities/map.helper";
 
 const scryfallServiceMock = new ScryfallMockedService();
 const griddeningService = new GriddeningService(scryfallServiceMock);
@@ -150,6 +152,170 @@ describe("Griddening Service", () => {
       expect(
         await service.intersectionHasMinimumHits(fakeConstraint, fakeConstraint)
       ).toBeFalsy();
+    });
+  });
+
+  describe("generateRandomCreatureBoard", async () => {
+    const mapOfDecks = await griddeningService.createConstraintDeck();
+    let copyDeck: Map<ConstraintType, GameConstraint[]> =
+      cloneMapOfDecks(mapOfDecks);
+    beforeEach(() => {
+      copyDeck = cloneMapOfDecks(mapOfDecks);
+    });
+
+    for (let i = 0; i < 4; i++) {
+      test(`Should return a puzzle with a type of CreatureFocused Puzzle for subtype ${i}`, async () => {
+        const puzzle = griddeningService.generateRandomCreatureBoard(
+          copyDeck,
+          i
+        );
+        expect(puzzle.type).toBe(PuzzleType.CreatureFocused);
+      });
+
+      test(`Should return a puzzle.subType of ${i} for subtype ${i}`, async () => {
+        const puzzle = griddeningService.generateRandomCreatureBoard(
+          copyDeck,
+          i
+        );
+        expect(puzzle.subType).toBe(i);
+      });
+    }
+
+    test("Should return a top row with a Color, Power, and Creature Job constraint and a side row with a Creature Race, Toughness, and Color constraint for subtype 0", async () => {
+      const puzzle = griddeningService.generateRandomCreatureBoard(copyDeck, 0);
+      expect(puzzle.topRow.length).toBe(3);
+      expect(puzzle.sideRow.length).toBe(3);
+
+      expect(
+        puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Power)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.Toughness
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
+        ).length
+      ).toBe(1);
+    });
+
+    test("Should return a top row with a Color, Power, and Creature Job constraint and a side row with a Creature Race, Creature Rules Text, and Color constraint for subtype 1", async () => {
+      const puzzle = griddeningService.generateRandomCreatureBoard(copyDeck, 1);
+      expect(puzzle.topRow.length).toBe(3);
+      expect(puzzle.sideRow.length).toBe(3);
+
+      expect(
+        puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Power)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureRulesText
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
+        ).length
+      ).toBe(1);
+    });
+
+    test("Should return a top row with a Color, Power, and Creature Job constraint and a side row with a Creature Race, Toughness, and Color constraint for subtype 2", async () => {
+      const puzzle = griddeningService.generateRandomCreatureBoard(copyDeck, 2);
+      expect(puzzle.topRow.length).toBe(3);
+      expect(puzzle.sideRow.length).toBe(3);
+
+      expect(
+        puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureRulesText
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.Toughness
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
+        ).length
+      ).toBe(1);
+    });
+
+    test("Should return a top row with a Color, Rarity, and Creature Job constraint and a side row with a Creature Race, ManaValue, and Color constraint for subtype 3", async () => {
+      const puzzle = griddeningService.generateRandomCreatureBoard(copyDeck, 3);
+      expect(puzzle.topRow.length).toBe(3);
+      expect(puzzle.sideRow.length).toBe(3);
+
+      expect(
+        puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Rarity)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.topRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
+          .length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.ManaValue
+        ).length
+      ).toBe(1);
+      expect(
+        puzzle.sideRow.filter(
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
+        ).length
+      ).toBe(1);
     });
   });
 });

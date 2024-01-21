@@ -111,94 +111,66 @@ export const rarityConstraints: GameConstraint[] = [
   new GameConstraint("Common", ConstraintType.Rarity, "r:c"),
 ];
 
-export const creatureRulesText: GameConstraint[] = [
+export const creatureRulesTextConstraints: GameConstraint[] = [
   new GameConstraint(
-    "Rules Text: Enters the Battlefield Tapped",
+    "Enters the Battlefield Tapped",
     ConstraintType.CreatureRulesText,
     'o:"~ enters the battlefield tapped"'
   ),
+  new GameConstraint("Trample", ConstraintType.CreatureRulesText, "o:Trample"),
+  new GameConstraint("Flying", ConstraintType.CreatureRulesText, "o:Flying"),
   new GameConstraint(
-    "Rules Text: Trample",
-    ConstraintType.CreatureRulesText,
-    "o:Trample"
-  ),
-  new GameConstraint(
-    "Rules Text: Flying",
-    ConstraintType.CreatureRulesText,
-    "o:Flying"
-  ),
-  new GameConstraint(
-    "Rules Text: Vigilance",
+    "Vigilance",
     ConstraintType.CreatureRulesText,
     "o:Vigilance"
   ),
   new GameConstraint(
-    "Rules Text: Deathtouch",
+    "Deathtouch",
     ConstraintType.CreatureRulesText,
     "o:Deathtouch"
   ),
+  new GameConstraint("Haste", ConstraintType.CreatureRulesText, "o:Haste"),
   new GameConstraint(
-    "Rules Text: Haste",
-    ConstraintType.CreatureRulesText,
-    "o:Haste"
-  ),
-  new GameConstraint(
-    "Rules Text: Hexproof",
+    "Hexproof",
     ConstraintType.CreatureRulesText,
     "o:Hexproof"
   ),
   new GameConstraint(
-    "Rules Text: Defender",
+    "Defender",
     ConstraintType.CreatureRulesText,
     "o:Defender"
   ),
   new GameConstraint(
-    "Rules Text: Double Strike",
+    "Double Strike",
     ConstraintType.CreatureRulesText,
     'o:"Double Strike"'
   ),
   new GameConstraint(
-    "Rules Text: First Strike",
+    "First Strike",
     ConstraintType.CreatureRulesText,
     'o:"First Strike"'
   ),
+  new GameConstraint("Flash", ConstraintType.CreatureRulesText, "o:Flash"),
   new GameConstraint(
-    "Rules Text: Flash",
-    ConstraintType.CreatureRulesText,
-    "o:Flash"
-  ),
-  new GameConstraint(
-    "Rules Text: Indestructible",
+    "Indestructible",
     ConstraintType.CreatureRulesText,
     "o:Indestructible"
   ),
   new GameConstraint(
-    "Rules Text: Lifelink",
+    "Lifelink",
     ConstraintType.CreatureRulesText,
     "o:Lifelink"
   ),
+  new GameConstraint("Menace", ConstraintType.CreatureRulesText, "o:Menace"),
+  new GameConstraint("Reach", ConstraintType.CreatureRulesText, "o:Reach"),
+  new GameConstraint("Ward", ConstraintType.CreatureRulesText, "o:Ward"),
   new GameConstraint(
-    "Rules Text: Menace",
-    ConstraintType.CreatureRulesText,
-    "o:Menace"
-  ),
-  new GameConstraint(
-    "Rules Text: Reach",
-    ConstraintType.CreatureRulesText,
-    "o:Reach"
-  ),
-  new GameConstraint(
-    "Rules Text: Ward",
-    ConstraintType.CreatureRulesText,
-    "o:Ward"
-  ),
-  new GameConstraint(
-    "Rules Text: Can't Block",
+    "Can't Block",
     ConstraintType.CreatureRulesText,
     'o:"~ can\'t block"'
   ),
   new GameConstraint(
-    "Rules Text: Attacks Each Combat",
+    "Attacks Each Combat",
     ConstraintType.CreatureRulesText,
     'o:"~ attacks each combat if able"'
   ),
@@ -242,7 +214,7 @@ export const colorConstraints: GameConstraint[] = [
     "/swamp.png",
     "A black mana symbol; a poorly drawn skull sillouhete on a dark gray field."
   ),
-  /* Colorless is kind of a paint right now because you can't have a Colorless-Green (etc) creature
+  /* Colorless is kind of a pain right now because you can't have a Colorless-Green (etc) creature
      Probably when I go to fix this when we "Draw" a colorless constraint we'll have the other constraint be Land or Artifact?
      But that will take some finessing and I want to find a cleverer way of generating these.
 
@@ -297,7 +269,7 @@ export const toughnessConstraints: GameConstraint[] = Array.from(
   (_, index) =>
     new GameConstraint(
       `Toughness ${index + 1}`,
-      ConstraintType.ManaValue,
+      ConstraintType.Toughness,
       `tou:${index + 1}`
     )
 );
@@ -305,9 +277,5 @@ export const toughnessConstraints: GameConstraint[] = Array.from(
 export const powerConstraints: GameConstraint[] = Array.from(
   { length: 11 },
   (_, index) =>
-    new GameConstraint(
-      `Power ${index}`,
-      ConstraintType.ManaValue,
-      `pow:${index}`
-    )
+    new GameConstraint(`Power ${index}`, ConstraintType.Power, `pow:${index}`)
 );
