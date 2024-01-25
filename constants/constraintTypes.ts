@@ -279,3 +279,15 @@ export const powerConstraints: GameConstraint[] = Array.from(
   (_, index) =>
     new GameConstraint(`Power ${index}`, ConstraintType.Power, `pow:${index}`)
 );
+
+export const nonLandNonArtifact: GameConstraint = new GameConstraint(
+  "Non-Land Non-Artifact",
+  ConstraintType.Type,
+  "-t:land -t:artifact"
+);
+
+export const colorless: GameConstraint = new GameConstraint(
+  "Colorless",
+  ConstraintType.Color,
+  "c:C -c:W -c:U -c:B -c:R -c:G"
+);

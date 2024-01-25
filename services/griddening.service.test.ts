@@ -15,7 +15,7 @@ import {
   expectedSetOutputs,
 } from "../testUtilities/consts/griddening.testconstants";
 import { PuzzleType } from "../types/Puzzle";
-import { cloneMapOfDecks } from "../testUtilities/map.helper";
+import { cloneMapOfDecks } from "../Utilities/map.helper";
 
 const scryfallServiceMock = new ScryfallMockedService();
 const griddeningService = new GriddeningService(scryfallServiceMock);
