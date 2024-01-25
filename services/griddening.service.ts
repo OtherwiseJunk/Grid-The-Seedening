@@ -34,12 +34,14 @@ export class GriddeningService {
     switch (boardType) {
       case PuzzleType.CreatureFocused:
         boardSubtype = this.getRandomInt(4);
+        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomCreatureBoard(
           constraintDeckByConstraintType,
           boardSubtype
         );
       case PuzzleType.FourColors:
         boardSubtype = this.getRandomInt(8);
+        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomFourColorBoard(
           constraintDeckByConstraintType,
           boardSubtype
@@ -47,18 +49,21 @@ export class GriddeningService {
         break;
       case PuzzleType.TwoColors:
         boardSubtype = this.getRandomInt(8);
+        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomTwoColorBoard(
           constraintDeckByConstraintType,
           boardSubtype
         );
       case PuzzleType.Colorless:
         boardSubtype = this.getRandomInt(8);
+        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomColorlessBoard(
           constraintDeckByConstraintType,
           boardSubtype
         );
       case PuzzleType.ArtistFocused:
         boardSubtype = this.getRandomInt(9);
+        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomArtistBoard(
           constraintDeckByConstraintType,
           boardSubtype

@@ -54,15 +54,15 @@ async function start() {
 
       if (intersectionsValid) {
         isValid = true;
-        rerollCount = 0;
         console.log("Puzzle is valid!");
         const timeTaken = Date.now() - start;
         console.log(
           `Total time taken to generate valid puzzle: ${timeTaken / 1000} seconds`
         );
         console.log(`Number of rerolls: ${rerollCount}`);
+        rerollCount = 0;
         logPuzzle(puzzle);
-        console.log("\r\n");
+        console.log("\r\n\r\n");
         console.log("Generating next puzzle...");
       } else {
         puzzle = rerollPuzzle(cloneMapOfDecks(deckMap), puzzle!);
@@ -110,12 +110,12 @@ function logPuzzle(puzzle: Puzzle) {
   console.log(
     `Generated puzzle of type ${puzzle?.type} with subtype ${puzzle?.subType}`
   );
-  console.log("Top Row:");
+  console.log("\r\nTop Row:");
   console.log(`${puzzle?.topRow[0].displayName}`);
   console.log(`${puzzle?.topRow[1].displayName}`);
-  console.log(`${puzzle?.topRow[2].displayName}`);
+  console.log(`${puzzle?.topRow[2].displayName}\r\n`);
   console.log("Side Row:");
   console.log(`${puzzle?.sideRow[0].displayName}`);
   console.log(`${puzzle?.sideRow[1].displayName}`);
-  console.log(`${puzzle?.sideRow[2].displayName}`);
+  console.log(`${puzzle?.sideRow[2].displayName}\r\n`);
 }
