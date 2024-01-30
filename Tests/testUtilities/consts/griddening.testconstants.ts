@@ -1,4 +1,4 @@
-import { GameConstraint, ConstraintType } from "../../types/GameConstraint";
+import { GameConstraint, ConstraintType } from "../../../types/GameConstraint";
 import { ScryfallHelper } from "../scryfall.helper";
 import * as Scry from "scryfall-sdk";
 

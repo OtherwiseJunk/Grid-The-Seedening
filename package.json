@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
+    "node-schedule": "^2.1.1",
     "prettier": "^3.2.4",
     "scryfall-sdk": "^4.2.2"
   }

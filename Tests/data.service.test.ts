@@ -1,4 +1,4 @@
-import { DataService } from "./data.service";
+import { DataService } from "../services/data.service";
 import { prismaMock } from "../__mocks__/databaseClient";
 import { expect, test, describe } from "vitest";
 import { Game } from "@prisma/client";

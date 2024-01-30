@@ -561,9 +561,11 @@ export class GriddeningService {
     return false;
   }
 
-  sanitizeSet(set: Scry.Set): Scry.Set {
-    if (!["core", "expansion"].includes(set.set_type)) return set;
+  isCoreOrExpansionSet(set: Scry.Set) {
+    return ["core", "expansion"].includes(set.set_type);
+  }
 
+  sanitizeSet(set: Scry.Set): Scry.Set {
     set.name = set.name
       .replace("Foreign Black Border", "")
       .replace("Limited Edition Alpha", "Alpha")
@@ -586,7 +588,7 @@ export class GriddeningService {
     return new GameConstraint(set.name, ConstraintType.Set, `set:${set.code}`);
   }
 
-  getTodaysDateString(dayOffset: number = 0): string {
+  getDateStringByOffset(dayOffset: number = 0): string {
     let now = new Date();
     now = this.addDays(now, dayOffset);
     return `${now.getFullYear()}${now
@@ -602,6 +604,7 @@ export class GriddeningService {
     sets = sets.filter((set) => set != undefined);
 
     return sets
+      .filter(this.isCoreOrExpansionSet)
       .map((set) => this.sanitizeSet(set))
       .filter(this.isPioneerSet)
       .map(this.buildSetConstraintFromScryfallSet);

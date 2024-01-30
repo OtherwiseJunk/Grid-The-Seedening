@@ -4,75 +4,115 @@ import { ScryfallService } from "./services/scryfall.service";
 import * as Scry from "scryfall-sdk";
 import { Puzzle, PuzzleType } from "./types/Puzzle";
 import { ConstraintType, GameConstraint } from "./types/GameConstraint";
+import { DataService } from "./services/data.service";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 const scryfall = new ScryfallService(Scry);
 const griddening = new GriddeningService(scryfall);
+const dataService = new DataService(prisma);
+const puzzleBuffer = 5;
 
 async function start() {
-  console.log("Starting...");
-  const deckMap = await griddening.createConstraintDeck();
-  for (let i = 0; i < 100; i++) {
-    console.log(`Generating ${i + 1} puzzle...`);
-    let puzzle = griddening.generateRandomPuzzleBoard(cloneMapOfDecks(deckMap));
-    while (puzzle == undefined) {
-      console.log("Generated puzzle undefined :-( rolling new type.");
-      puzzle = griddening.generateRandomPuzzleBoard(cloneMapOfDecks(deckMap));
-    }
-    let rerollCount = 0;
-    let isValid = false;
-    const start = Date.now();
-    while (!isValid) {
-      const topRow = puzzle.topRow as GameConstraint[];
-      const sideRow = puzzle.sideRow as GameConstraint[];
-      let intersectionsValid = true;
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[0]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[1]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[2]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[0]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[1]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[2]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[0]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[1]));
-      intersectionsValid =
-        intersectionsValid &&
-        (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[2]));
-
-      if (intersectionsValid) {
-        isValid = true;
-        console.log("Puzzle is valid!");
-        const timeTaken = Date.now() - start;
-        console.log(
-          `Total time taken to generate valid puzzle: ${timeTaken / 1000} seconds`
-        );
-        console.log(`Number of rerolls: ${rerollCount}`);
-        rerollCount = 0;
-        logPuzzle(puzzle);
-        console.log("\r\n\r\n");
-        console.log("Generating next puzzle...");
-      } else {
-        puzzle = rerollPuzzle(cloneMapOfDecks(deckMap), puzzle!);
-        rerollCount++;
-      }
-    }
+  const date = await dataService.getDateOfNewestGame();
+  const offset = calculateOffsetFromToday(date!);
+  console.log(`Offset from today: ${offset}`);
+  const puzzlesToCreate = puzzleBuffer - offset;
+  if (puzzlesToCreate > 0) {
+    console.log(`Creating ${puzzlesToCreate} puzzles`);
+    await generatePuzzles(puzzlesToCreate, offset);
   }
 }
 
-start();
+async function generatePuzzles(puzzleCount: number, dayOffset: number) {
+  console.log("Starting...");
+  const deckMap = await griddening.createConstraintDeck();
+
+  for (let i = 0; i < puzzleCount; i++) {
+    console.log(`Generating ${i + 1} puzzle...`);
+    const puzzle = await generateValidPuzzle(deckMap);
+    logPuzzle(puzzle);
+    const dateStringFromOffset = griddening.getDateStringByOffset(
+      dayOffset + i
+    );
+    console.log(`Creating game in DB for ${dateStringFromOffset}`);
+    await dataService.createNewGame(
+      griddening.getDateStringByOffset(dayOffset + i),
+      [...puzzle.topRow, ...puzzle.sideRow]
+    );
+    console.log("\r\n\r\n");
+    console.log("Generating next puzzle...");
+  }
+}
+
+async function generateValidPuzzle(
+  deckMap: Map<ConstraintType, GameConstraint[]>
+): Promise<Puzzle> {
+  let puzzle = griddening.generateRandomPuzzleBoard(cloneMapOfDecks(deckMap));
+  while (puzzle == undefined) {
+    console.log("Generated puzzle undefined :-( rolling new type.");
+    puzzle = griddening.generateRandomPuzzleBoard(cloneMapOfDecks(deckMap));
+  }
+  let rerollCount = 0;
+  let isValid = false;
+  const start = Date.now();
+  while (!isValid) {
+    const topRow = puzzle.topRow as GameConstraint[];
+    const sideRow = puzzle.sideRow as GameConstraint[];
+    const intersectionsValid = await intersectionsAreValid(sideRow, topRow);
+
+    if (intersectionsValid) {
+      isValid = true;
+      console.log("Puzzle is valid!");
+      const timeTaken = Date.now() - start;
+      console.log(
+        `Total time taken to generate valid puzzle: ${timeTaken / 1000} seconds`
+      );
+      console.log(`Number of rerolls: ${rerollCount}`);
+      rerollCount = 0;
+    } else {
+      puzzle = rerollPuzzle(cloneMapOfDecks(deckMap), puzzle!);
+      rerollCount++;
+    }
+  }
+  return puzzle;
+}
+
+async function intersectionsAreValid(
+  sideRow: GameConstraint[],
+  topRow: GameConstraint[]
+) {
+  let intersectionsValid = true;
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[0]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[1]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[2]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[0]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[1]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[2]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[0]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[1]));
+  intersectionsValid =
+    intersectionsValid &&
+    (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[2]));
+
+  return intersectionsValid;
+}
 
 function rerollPuzzle(
   deckMap: Map<ConstraintType, GameConstraint[]>,
@@ -119,3 +159,14 @@ function logPuzzle(puzzle: Puzzle) {
   console.log(`${puzzle?.sideRow[1].displayName}`);
   console.log(`${puzzle?.sideRow[2].displayName}\r\n`);
 }
+
+export function calculateOffsetFromToday(date: Date) {
+  const now = new Date();
+  console.log(`Calculate dating between ${date} and ${now}`);
+  const difference = Math.ceil(
+    Math.round(date.getTime() - now.getTime()) / (1000 * 3600 * 24)
+  );
+  return difference;
+}
+
+start();

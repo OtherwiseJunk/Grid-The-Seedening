@@ -1,8 +1,8 @@
 import { expect, test, describe, beforeEach } from "vitest";
-import { GriddeningService } from "./griddening.service";
+import { GriddeningService } from "../services/griddening.service";
 import { ConstraintType, GameConstraint } from "../types/GameConstraint";
 import * as Scry from "scryfall-sdk";
-import { ScryfallHelper } from "../testUtilities/scryfall.helper";
+import { ScryfallHelper } from "./testUtilities/scryfall.helper";
 import { ScryfallMockedService } from "../__mocks__/scryfall.service";
 import {
   pioneerSet,
@@ -13,7 +13,7 @@ import {
   setsWithExpectedConstraintReturns,
   setInputs,
   expectedSetOutputs,
-} from "../testUtilities/consts/griddening.testconstants";
+} from "./testUtilities/consts/griddening.testconstants";
 import { PuzzleType } from "../types/Puzzle";
 import { cloneMapOfDecks } from "../Utilities/map.helper";
 
