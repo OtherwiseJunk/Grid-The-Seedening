@@ -6,6 +6,7 @@ import { Puzzle, PuzzleType } from "./types/Puzzle";
 import { ConstraintType, GameConstraint } from "./types/GameConstraint";
 import { DataService } from "./services/data.service";
 import { PrismaClient } from "@prisma/client";
+import schedule from "node-schedule";
 
 const prisma = new PrismaClient();
 const scryfall = new ScryfallService(Scry);
@@ -28,7 +29,7 @@ async function generatePuzzles(puzzleCount: number, dayOffset: number) {
   console.log("Starting...");
   const deckMap = await griddening.createConstraintDeck();
 
-  for (let i = 0; i < puzzleCount; i++) {
+  for (let i = 1; i < puzzleCount + 1; i++) {
     console.log(`Generating ${i + 1} puzzle...`);
     const puzzle = await generateValidPuzzle(deckMap);
     logPuzzle(puzzle);
@@ -162,11 +163,14 @@ function logPuzzle(puzzle: Puzzle) {
 
 export function calculateOffsetFromToday(date: Date) {
   const now = new Date();
-  console.log(`Calculate dating between ${date} and ${now}`);
   const difference = Math.ceil(
     Math.round(date.getTime() - now.getTime()) / (1000 * 3600 * 24)
   );
   return difference;
 }
 
-start();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const job = schedule.scheduleJob("00 00 * * *", () => {
+  console.log("firing job");
+  start();
+});
