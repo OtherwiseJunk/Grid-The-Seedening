@@ -174,3 +174,6 @@ const job = schedule.scheduleJob("00 00 * * *", () => {
   console.log("firing job");
   start();
 });
+
+console.log("Scheduled job to run nightly at midnight.");
+console.log("Current time: " + new Date().toLocaleString("en-US"));
