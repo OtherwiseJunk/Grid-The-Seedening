@@ -12,6 +12,7 @@
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.8",
+    "@types/node-schedule": "^2.1.5",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "eslint": "^8.56.0",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
+    "@vitest/coverage-v8": "^1.2.2",
     "node-schedule": "^2.1.1",
     "prettier": "^3.2.4",
     "scryfall-sdk": "^4.2.2"
