@@ -1,4 +1,4 @@
-FROM node:18-slim
+FROM node:18-alpine 
 
 # Copy local code to the container image
 WORKDIR /usr/src/app
