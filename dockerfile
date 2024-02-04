@@ -6,6 +6,7 @@ COPY . .
 
 # Install dependencies
 RUN npm i
+RUN RUN npx prisma generate
 
 # Run the app on entry
 ENTRYPOINT [ "npx", "ts-node", "main.ts" ]
