@@ -170,7 +170,7 @@ export function calculateOffsetFromToday(date: Date) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const job = schedule.scheduleJob("00 00 * * *", () => {
+const job = schedule.scheduleJob("30 00 * * *", () => {
   console.log("firing job");
   start();
 });
