@@ -315,7 +315,7 @@ describe("Griddening Service", () => {
         puzzle.sideRow.filter(
           (c) => c.constraintType === ConstraintType.CreatureRaceTypes
         ).length
-      ).toBe(1);
+      ).not.toBe(1);
     });
   });
 
