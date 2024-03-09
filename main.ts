@@ -76,6 +76,8 @@ async function generateValidPuzzle(
       rerollCount++;
     }
   }
+  puzzle.topRow = shuffle(puzzle.topRow);
+  puzzle.sideRow = shuffle(puzzle.sideRow);
   return puzzle;
 }
 
@@ -174,6 +176,26 @@ const job = schedule.scheduleJob("30 00 * * *", () => {
   console.log("firing job");
   start();
 });
+
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex > 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
 
 console.log("Scheduled job to run nightly at midnight.");
 console.log("Current time: " + new Date().toLocaleString("en-US"));
