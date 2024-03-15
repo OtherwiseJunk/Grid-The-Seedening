@@ -76,8 +76,15 @@ async function generateValidPuzzle(
       rerollCount++;
     }
   }
-  puzzle.topRow = shuffle(puzzle.topRow);
-  puzzle.sideRow = shuffle(puzzle.sideRow);
+  puzzle.topRow = shuffle<GameConstraint>(puzzle.topRow);
+  puzzle.sideRow = shuffle<GameConstraint>(puzzle.sideRow);
+
+  if(Math.floor(Math.random() * 2) === 1){
+    const temp = puzzle.topRow;
+    puzzle.topRow = puzzle.sideRow;
+    puzzle.sideRow = temp;
+  }
+
   return puzzle;
 }
 
@@ -177,7 +184,7 @@ const job = schedule.scheduleJob("30 00 * * *", () => {
   start();
 });
 
-function shuffle(array) {
+function shuffle<T>(array: Array<T>) {
   let currentIndex = array.length,
     randomIndex;
 
