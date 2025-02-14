@@ -7,7 +7,7 @@ COPY . .
 # Install dependencies
 RUN npm i
 RUN npx prisma generate
-RUN apk add --no-cache openssl1.1-compat
+RUN apk add --no-cache openssl1.1
 
 # Run the app on entry
 ENTRYPOINT [ "npx", "ts-node", "main.ts" ]
