@@ -206,3 +206,5 @@ function shuffle<T>(array: Array<T>) {
 
 console.log("Scheduled job to run nightly at midnight.");
 console.log("Current time: " + new Date().toLocaleString("en-US"));
+console.log("Running initial generation now.");
+start();
