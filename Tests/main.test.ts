@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest";
-import { calculateOffsetFromToday } from "../main";
+import { calculateOffsetFromToday } from "../main.js";
 
 describe("Main", () => {
   describe("calculateOffsetFromToday", () => {

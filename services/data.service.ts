@@ -1,8 +1,8 @@
 import { Game, PrismaClient } from "@prisma/client";
-import { GameConstraint } from "../types/GameConstraint";
+import { GameConstraint } from "../types/GameConstraint.js";
 
 export class DataService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   async getDateOfNewestGame(): Promise<Date | undefined> {
     const games = await this.prisma.game.findMany();

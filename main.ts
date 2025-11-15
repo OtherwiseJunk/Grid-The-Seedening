@@ -1,10 +1,10 @@
-import { cloneMapOfDecks } from "./Utilities/map.helper";
-import { GriddeningService } from "./services/griddening.service";
-import { ScryfallService } from "./services/scryfall.service";
+import { cloneMapOfDecks } from "./Utilities/map.helper.js";
+import { GriddeningService } from "./services/griddening.service.js";
+import { ScryfallService } from "./services/scryfall.service.js";
 import * as Scry from "scryfall-sdk";
-import { Puzzle, PuzzleType } from "./types/Puzzle";
-import { ConstraintType, GameConstraint } from "./types/GameConstraint";
-import { DataService } from "./services/data.service";
+import { Puzzle, PuzzleType } from "./types/Puzzle.js";
+import { ConstraintType, GameConstraint } from "./types/GameConstraint.js";
+import { DataService } from "./services/data.service.js";
 import { PrismaClient } from "@prisma/client";
 import schedule from "node-schedule";
 
@@ -79,7 +79,7 @@ async function generateValidPuzzle(
   puzzle.topRow = shuffle<GameConstraint>(puzzle.topRow);
   puzzle.sideRow = shuffle<GameConstraint>(puzzle.sideRow);
 
-  if(Math.floor(Math.random() * 2) === 1){
+  if (Math.floor(Math.random() * 2) === 1) {
     const temp = puzzle.topRow;
     puzzle.topRow = puzzle.sideRow;
     puzzle.sideRow = temp;

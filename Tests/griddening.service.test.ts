@@ -1,9 +1,9 @@
 import { expect, test, describe, beforeEach } from "vitest";
-import { GriddeningService } from "../services/griddening.service";
-import { ConstraintType, GameConstraint } from "../types/GameConstraint";
+import { GriddeningService } from "../services/griddening.service.js";
+import { ConstraintType, GameConstraint } from "../types/GameConstraint.js";
 import * as Scry from "scryfall-sdk";
-import { ScryfallHelper } from "./testUtilities/scryfall.helper";
-import { ScryfallMockedService } from "../__mocks__/scryfall.service";
+import { ScryfallHelper } from "./testUtilities/scryfall.helper.js";
+import { ScryfallMockedService } from "../__mocks__/scryfall.service.js";
 import {
   pioneerSet,
   standardSet,
@@ -13,9 +13,9 @@ import {
   setsWithExpectedConstraintReturns,
   setInputs,
   expectedSetOutputs,
-} from "./testUtilities/consts/griddening.testconstants";
-import { PuzzleType } from "../types/Puzzle";
-import { cloneMapOfDecks } from "../Utilities/map.helper";
+} from "./testUtilities/consts/griddening.testconstants.js";
+import { PuzzleType } from "../types/Puzzle.js";
+import { cloneMapOfDecks } from "../Utilities/map.helper.js";
 
 const scryfallServiceMock = new ScryfallMockedService();
 const griddeningService = new GriddeningService(scryfallServiceMock);

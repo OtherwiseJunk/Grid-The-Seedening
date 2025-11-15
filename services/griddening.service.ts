@@ -1,7 +1,7 @@
-import { ConstraintType, GameConstraint } from "../types/GameConstraint";
+import { ConstraintType, GameConstraint } from "../types/GameConstraint.js";
 import * as Scry from "scryfall-sdk";
-import { IScryfallService } from "./scryfall.service";
-import { PuzzleType, Puzzle } from "../types/Puzzle";
+import { IScryfallService } from "./scryfall.service.js";
+import { PuzzleType, Puzzle } from "../types/Puzzle.js";
 import {
   colorConstraints,
   manaValueConstraints,
@@ -17,10 +17,10 @@ import {
   artistConstraints,
   nonLandNonArtifact,
   colorless,
-} from "../constants/constraintTypes";
+} from "../constants/constraintTypes.js";
 
 export class GriddeningService {
-  constructor(private scryfallService: IScryfallService) {}
+  constructor(private scryfallService: IScryfallService) { }
   minimumHits = process.env.MINIMUM_HITS
     ? parseInt(process.env.MINIMUM_HITS)
     : 10;

@@ -1,4 +1,4 @@
-import { ScryfallService } from "../services/scryfall.service";
+import { ScryfallService } from "../services/scryfall.service.js";
 import * as Scry from "scryfall-sdk";
 import { expect, test, beforeEach, describe } from "vitest";
 

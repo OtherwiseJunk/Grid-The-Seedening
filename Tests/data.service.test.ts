@@ -1,5 +1,5 @@
-import { DataService } from "../services/data.service";
-import { prismaMock } from "../__mocks__/databaseClient";
+import { DataService } from "../services/data.service.js";
+import { prismaMock } from "../__mocks__/databaseClient.js";
 import { expect, test, describe } from "vitest";
 import { Game } from "@prisma/client";
 

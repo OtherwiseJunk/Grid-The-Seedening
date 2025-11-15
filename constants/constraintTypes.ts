@@ -1,4 +1,4 @@
-import { GameConstraint, ConstraintType } from "../types/GameConstraint";
+import { GameConstraint, ConstraintType } from "../types/GameConstraint.js";
 
 const cardTypes = [
   // Card Types
