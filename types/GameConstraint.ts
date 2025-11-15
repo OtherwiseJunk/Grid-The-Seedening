@@ -4,7 +4,7 @@ export class GameConstraint {
     public constraintType: ConstraintType,
     public scryfallQuery: string,
     public imageSrc: string = "",
-    public imageAltText: string = ""
+    public imageAltText: string = "",
   ) {}
 }
 

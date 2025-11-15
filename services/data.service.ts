@@ -2,7 +2,7 @@ import { Game, PrismaClient } from "@prisma/client";
 import { GameConstraint } from "../types/GameConstraint.js";
 
 export class DataService {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   async getDateOfNewestGame(): Promise<Date | undefined> {
     const games = await this.prisma.game.findMany();
@@ -10,7 +10,7 @@ export class DataService {
     if (games === undefined) return games;
 
     const latestGame = games.sort(
-      (gameA, gameB) => parseInt(gameB.dateString) - parseInt(gameA.dateString)
+      (gameA, gameB) => parseInt(gameB.dateString) - parseInt(gameA.dateString),
     )[0];
 
     return this.dateStringToDate(latestGame.dateString);
@@ -18,7 +18,7 @@ export class DataService {
 
   async createNewGame(
     dateString: string,
-    validGameConstraints: GameConstraint[]
+    validGameConstraints: GameConstraint[],
   ): Promise<Game | undefined> {
     return await this.prisma.game.create({
       data: {

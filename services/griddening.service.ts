@@ -20,13 +20,13 @@ import {
 } from "../constants/constraintTypes.js";
 
 export class GriddeningService {
-  constructor(private scryfallService: IScryfallService) { }
+  constructor(private scryfallService: IScryfallService) {}
   minimumHits = process.env.MINIMUM_HITS
     ? parseInt(process.env.MINIMUM_HITS)
     : 10;
 
   generateRandomPuzzleBoard(
-    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>
+    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
   ) {
     const boardType = this.getRandomInt(5);
     console.log(`got puzzle type ${PuzzleType[boardType]}`);
@@ -37,14 +37,14 @@ export class GriddeningService {
         console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomCreatureBoard(
           constraintDeckByConstraintType,
-          boardSubtype
+          boardSubtype,
         );
       case PuzzleType.FourColors:
         boardSubtype = this.getRandomInt(8);
         console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomFourColorBoard(
           constraintDeckByConstraintType,
-          boardSubtype
+          boardSubtype,
         );
         break;
       case PuzzleType.TwoColors:
@@ -52,28 +52,28 @@ export class GriddeningService {
         console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomTwoColorBoard(
           constraintDeckByConstraintType,
-          boardSubtype
+          boardSubtype,
         );
       case PuzzleType.Colorless:
         boardSubtype = this.getRandomInt(8);
         console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomColorlessBoard(
           constraintDeckByConstraintType,
-          boardSubtype
+          boardSubtype,
         );
       case PuzzleType.ArtistFocused:
         boardSubtype = this.getRandomInt(9);
         console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomArtistBoard(
           constraintDeckByConstraintType,
-          boardSubtype
+          boardSubtype,
         );
     }
   }
 
   generateRandomFourColorBoard(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
-    fourColorBoardType: number
+    fourColorBoardType: number,
   ): Puzzle {
     const [
       setConstraints,
@@ -135,7 +135,7 @@ export class GriddeningService {
 
   generateRandomTwoColorBoard(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
-    twoColorBoardType: number
+    twoColorBoardType: number,
   ): Puzzle {
     const [
       setConstraints,
@@ -208,7 +208,7 @@ export class GriddeningService {
 
   generateRandomCreatureBoard(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
-    creatureBoardType: number
+    creatureBoardType: number,
   ): Puzzle {
     const [
       creatureRaceConstraints,
@@ -240,12 +240,12 @@ export class GriddeningService {
       case 1:
         puzzle.topRow.push(powerConstraints.shift() as GameConstraint);
         puzzle.sideRow.push(
-          creatureRulesTextConstraints.shift() as GameConstraint
+          creatureRulesTextConstraints.shift() as GameConstraint,
         );
         break;
       case 2:
         puzzle.topRow.push(
-          creatureRulesTextConstraints.shift() as GameConstraint
+          creatureRulesTextConstraints.shift() as GameConstraint,
         );
         puzzle.sideRow.push(toughnessConstraints.shift() as GameConstraint);
         break;
@@ -259,7 +259,7 @@ export class GriddeningService {
 
   generateRandomArtistBoard(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
-    colorBoardType: number
+    colorBoardType: number,
   ): Puzzle {
     const [
       colorConstraints,
@@ -349,7 +349,7 @@ export class GriddeningService {
 
   generateRandomColorlessBoard(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
-    colorlessBoardType: number
+    colorlessBoardType: number,
   ): Puzzle {
     const [
       setConstraints,
@@ -374,7 +374,7 @@ export class GriddeningService {
           constraint.displayName == "Instant" ||
           constraint.displayName == "Sorcery"
         );
-      }
+      },
     );
     switch (colorlessBoardType) {
       case 0:
@@ -387,7 +387,7 @@ export class GriddeningService {
         puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
         puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
         puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint
+          filteredCardTypeConstraints.shift() as GameConstraint,
         );
         puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
         break;
@@ -395,7 +395,7 @@ export class GriddeningService {
         puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
         puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
         puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint
+          filteredCardTypeConstraints.shift() as GameConstraint,
         );
         puzzle.sideRow.push(artistConstraints.shift() as GameConstraint);
         break;
@@ -403,20 +403,20 @@ export class GriddeningService {
         puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
         puzzle.topRow.push(setConstraints.shift() as GameConstraint);
         puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint
+          filteredCardTypeConstraints.shift() as GameConstraint,
         );
         puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint
+          filteredCardTypeConstraints.shift() as GameConstraint,
         );
         break;
       case 4:
         puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
         puzzle.topRow.push(setConstraints.shift() as GameConstraint);
         puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint
+          filteredCardTypeConstraints.shift() as GameConstraint,
         );
         puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint
+          filteredCardTypeConstraints.shift() as GameConstraint,
         );
         break;
       case 5:
@@ -442,32 +442,32 @@ export class GriddeningService {
   }
 
   private getDefaultDecks(
-    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>
+    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
   ) {
     const colorConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Color
-      ) as GameConstraint[]
+        ConstraintType.Color,
+      ) as GameConstraint[],
     );
     const rarityConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Rarity
-      ) as GameConstraint[]
+        ConstraintType.Rarity,
+      ) as GameConstraint[],
     );
     const manaValueConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.ManaValue
-      ) as GameConstraint[]
+        ConstraintType.ManaValue,
+      ) as GameConstraint[],
     );
     const cardTypeConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Type
-      ) as GameConstraint[]
+        ConstraintType.Type,
+      ) as GameConstraint[],
     );
     const artistConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Artist
-      ) as GameConstraint[]
+        ConstraintType.Artist,
+      ) as GameConstraint[],
     );
 
     return [
@@ -480,10 +480,12 @@ export class GriddeningService {
   }
 
   private getColorFocusedDecks(
-    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>
+    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
   ) {
     const setConstraints = this.shuffleArray(
-      constraintDeckByConstraintType.get(ConstraintType.Set) as GameConstraint[]
+      constraintDeckByConstraintType.get(
+        ConstraintType.Set,
+      ) as GameConstraint[],
     );
 
     return [
@@ -493,47 +495,47 @@ export class GriddeningService {
   }
 
   private getCreatureDecks(
-    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>
+    constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
   ) {
     const creatureRaceConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.CreatureRaceTypes
-      ) as GameConstraint[]
+        ConstraintType.CreatureRaceTypes,
+      ) as GameConstraint[],
     );
     const creatureJobConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.CreatureJobTypes
-      ) as GameConstraint[]
+        ConstraintType.CreatureJobTypes,
+      ) as GameConstraint[],
     );
     const creatureRulesTextConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.CreatureRulesText
-      ) as GameConstraint[]
+        ConstraintType.CreatureRulesText,
+      ) as GameConstraint[],
     );
     const powerConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Power
-      ) as GameConstraint[]
+        ConstraintType.Power,
+      ) as GameConstraint[],
     );
     const toughnessConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Toughness
-      ) as GameConstraint[]
+        ConstraintType.Toughness,
+      ) as GameConstraint[],
     );
     const colorConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Color
-      ) as GameConstraint[]
+        ConstraintType.Color,
+      ) as GameConstraint[],
     );
     const rarityConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.Rarity
-      ) as GameConstraint[]
+        ConstraintType.Rarity,
+      ) as GameConstraint[],
     );
     const manaValueConstraints = this.shuffleArray(
       constraintDeckByConstraintType.get(
-        ConstraintType.ManaValue
-      ) as GameConstraint[]
+        ConstraintType.ManaValue,
+      ) as GameConstraint[],
     );
 
     return [
@@ -611,7 +613,7 @@ export class GriddeningService {
   }
 
   async selectValidConstraints(
-    constraintMap: Map<ConstraintType, GameConstraint[]>
+    constraintMap: Map<ConstraintType, GameConstraint[]>,
   ): Promise<GameConstraint[]> {
     console.log(constraintMap);
     return [];
@@ -619,7 +621,7 @@ export class GriddeningService {
 
   async intersectionHasMinimumHits(
     gameConstraintOne: GameConstraint,
-    gameConstraintTwo: GameConstraint
+    gameConstraintTwo: GameConstraint,
   ): Promise<boolean> {
     const query = `${gameConstraintOne.scryfallQuery} ${gameConstraintTwo.scryfallQuery}`;
     const cardCount = await this.scryfallService.getFirstPageCardCount(query);

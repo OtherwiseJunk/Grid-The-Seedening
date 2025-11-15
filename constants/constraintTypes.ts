@@ -64,7 +64,7 @@ const creatureJobTypes = [
 
 export const cardTypeConstraints: GameConstraint[] = cardTypes.map(
   (cardType) =>
-    new GameConstraint(cardType, ConstraintType.Type, `t:${cardType}`)
+    new GameConstraint(cardType, ConstraintType.Type, `t:${cardType}`),
 );
 
 export const creatureRaceConstraints: GameConstraint[] = creatureRaceTypes.map(
@@ -72,8 +72,8 @@ export const creatureRaceConstraints: GameConstraint[] = creatureRaceTypes.map(
     new GameConstraint(
       cardType,
       ConstraintType.CreatureRaceTypes,
-      `t:${cardType}`
-    )
+      `t:${cardType}`,
+    ),
 );
 
 export const creatureJobConstraints: GameConstraint[] = creatureJobTypes.map(
@@ -81,8 +81,8 @@ export const creatureJobConstraints: GameConstraint[] = creatureJobTypes.map(
     new GameConstraint(
       cardType,
       ConstraintType.CreatureJobTypes,
-      `t:${cardType}`
-    )
+      `t:${cardType}`,
+    ),
 );
 
 export const artifactSubtypesConstraints: GameConstraint[] = artifactTypes.map(
@@ -90,8 +90,8 @@ export const artifactSubtypesConstraints: GameConstraint[] = artifactTypes.map(
     new GameConstraint(
       cardType,
       ConstraintType.ArtifactSubtypes,
-      `t:${cardType}`
-    )
+      `t:${cardType}`,
+    ),
 );
 
 export const enchantmentSubtypeTypeConstraints: GameConstraint[] =
@@ -100,8 +100,8 @@ export const enchantmentSubtypeTypeConstraints: GameConstraint[] =
       new GameConstraint(
         cardType,
         ConstraintType.EnchantmentSubtypes,
-        `t:${cardType}`
-      )
+        `t:${cardType}`,
+      ),
   );
 
 export const rarityConstraints: GameConstraint[] = [
@@ -115,51 +115,51 @@ export const creatureRulesTextConstraints: GameConstraint[] = [
   new GameConstraint(
     "Enters the Battlefield Tapped",
     ConstraintType.CreatureRulesText,
-    'o:"~ enters the battlefield tapped"'
+    'o:"~ enters the battlefield tapped"',
   ),
   new GameConstraint("Trample", ConstraintType.CreatureRulesText, "o:Trample"),
   new GameConstraint("Flying", ConstraintType.CreatureRulesText, "o:Flying"),
   new GameConstraint(
     "Vigilance",
     ConstraintType.CreatureRulesText,
-    "o:Vigilance"
+    "o:Vigilance",
   ),
   new GameConstraint(
     "Deathtouch",
     ConstraintType.CreatureRulesText,
-    "o:Deathtouch"
+    "o:Deathtouch",
   ),
   new GameConstraint("Haste", ConstraintType.CreatureRulesText, "o:Haste"),
   new GameConstraint(
     "Hexproof",
     ConstraintType.CreatureRulesText,
-    "o:Hexproof"
+    "o:Hexproof",
   ),
   new GameConstraint(
     "Defender",
     ConstraintType.CreatureRulesText,
-    "o:Defender"
+    "o:Defender",
   ),
   new GameConstraint(
     "Double Strike",
     ConstraintType.CreatureRulesText,
-    'o:"Double Strike"'
+    'o:"Double Strike"',
   ),
   new GameConstraint(
     "First Strike",
     ConstraintType.CreatureRulesText,
-    'o:"First Strike"'
+    'o:"First Strike"',
   ),
   new GameConstraint("Flash", ConstraintType.CreatureRulesText, "o:Flash"),
   new GameConstraint(
     "Indestructible",
     ConstraintType.CreatureRulesText,
-    "o:Indestructible"
+    "o:Indestructible",
   ),
   new GameConstraint(
     "Lifelink",
     ConstraintType.CreatureRulesText,
-    "o:Lifelink"
+    "o:Lifelink",
   ),
   new GameConstraint("Menace", ConstraintType.CreatureRulesText, "o:Menace"),
   new GameConstraint("Reach", ConstraintType.CreatureRulesText, "o:Reach"),
@@ -167,12 +167,12 @@ export const creatureRulesTextConstraints: GameConstraint[] = [
   new GameConstraint(
     "Can't Block",
     ConstraintType.CreatureRulesText,
-    'o:"~ can\'t block"'
+    'o:"~ can\'t block"',
   ),
   new GameConstraint(
     "Attacks Each Combat",
     ConstraintType.CreatureRulesText,
-    'o:"~ attacks each combat if able"'
+    'o:"~ attacks each combat if able"',
   ),
 ];
 
@@ -182,12 +182,12 @@ export const artistConstraints: GameConstraint[] = [
   new GameConstraint(
     "Artist: Magali Villeneuve",
     ConstraintType.Artist,
-    "a:Villeneuve"
+    "a:Villeneuve",
   ),
   new GameConstraint(
     "Artist: Alayna Danner",
     ConstraintType.Artist,
-    "a:Danner"
+    "a:Danner",
   ),
   new GameConstraint("Artist: Kev Walker", ConstraintType.Artist, "a:Walker"),
   new GameConstraint("Artist: Sam Burley", ConstraintType.Artist, "a:Burley"),
@@ -199,7 +199,7 @@ export const artistConstraints: GameConstraint[] = [
   new GameConstraint(
     "Artist: Wayne Reynolds",
     ConstraintType.Artist,
-    "a:Reynolds"
+    "a:Reynolds",
   ),
   new GameConstraint("Artist: Randy Vargas", ConstraintType.Artist, "a:Vargas"),
   new GameConstraint("Artist: Livia Prima", ConstraintType.Artist, "a:Prima"),
@@ -212,7 +212,7 @@ export const colorConstraints: GameConstraint[] = [
     ConstraintType.Color,
     "c:B",
     "/swamp.png",
-    "A black mana symbol; a poorly drawn skull sillouhete on a dark gray field."
+    "A black mana symbol; a poorly drawn skull sillouhete on a dark gray field.",
   ),
   /* Colorless is kind of a pain right now because you can't have a Colorless-Green (etc) creature
      Probably when I go to fix this when we "Draw" a colorless constraint we'll have the other constraint be Land or Artifact?
@@ -229,28 +229,28 @@ export const colorConstraints: GameConstraint[] = [
     ConstraintType.Color,
     "c:R",
     "/mountain.png",
-    "A red mana symbol; a poorly drawn fireball sillouhete on a red field."
+    "A red mana symbol; a poorly drawn fireball sillouhete on a red field.",
   ),
   new GameConstraint(
     "Green",
     ConstraintType.Color,
     "c:G",
     "/forest.png",
-    "A green mana symbol; a poorly drawn tree sillouhete on a green field."
+    "A green mana symbol; a poorly drawn tree sillouhete on a green field.",
   ),
   new GameConstraint(
     "Blue",
     ConstraintType.Color,
     "c:U",
     "/island.png",
-    "A blue mana symbol; a poorly drawn water droplet sillouhete on a blue field."
+    "A blue mana symbol; a poorly drawn water droplet sillouhete on a blue field.",
   ),
   new GameConstraint(
     "White",
     ConstraintType.Color,
     "c:W",
     "/plains.png",
-    "A white mana symbol; a poorly drawn sun sillouhete on a pale yellow field."
+    "A white mana symbol; a poorly drawn sun sillouhete on a pale yellow field.",
   ),
 ];
 
@@ -260,8 +260,8 @@ export const manaValueConstraints: GameConstraint[] = Array.from(
     new GameConstraint(
       `Mana Value ${index}`,
       ConstraintType.ManaValue,
-      `cmc:${index}`
-    )
+      `cmc:${index}`,
+    ),
 );
 
 export const toughnessConstraints: GameConstraint[] = Array.from(
@@ -270,24 +270,24 @@ export const toughnessConstraints: GameConstraint[] = Array.from(
     new GameConstraint(
       `Toughness ${index + 1}`,
       ConstraintType.Toughness,
-      `tou:${index + 1}`
-    )
+      `tou:${index + 1}`,
+    ),
 );
 
 export const powerConstraints: GameConstraint[] = Array.from(
   { length: 11 },
   (_, index) =>
-    new GameConstraint(`Power ${index}`, ConstraintType.Power, `pow:${index}`)
+    new GameConstraint(`Power ${index}`, ConstraintType.Power, `pow:${index}`),
 );
 
 export const nonLandNonArtifact: GameConstraint = new GameConstraint(
   "Non-Land Non-Artifact",
   ConstraintType.Type,
-  "-t:land -t:artifact"
+  "-t:land -t:artifact",
 );
 
 export const colorless: GameConstraint = new GameConstraint(
   "Colorless",
   ConstraintType.Color,
-  "c:C -c:W -c:U -c:B -c:R -c:G"
+  "c:C -c:W -c:U -c:B -c:R -c:G",
 );

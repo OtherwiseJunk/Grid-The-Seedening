@@ -8,7 +8,7 @@ export class ScryfallHelper {
     set_name: string,
     set_code: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    set_type: any = "core"
+    set_type: any = "core",
   ): Scry.Set {
     return {
       object: "set",
@@ -49,7 +49,7 @@ export class ScryfallHelper {
               include_multilingual?: boolean | undefined;
               include_variations?: boolean | undefined;
             }
-          | undefined
+          | undefined,
       ): Promise<Scry.Card[]> {
         throw new Error("Function not implemented.");
       },
@@ -78,7 +78,7 @@ export class ScryfallHelper {
               include_multilingual?: boolean | undefined;
               include_variations?: boolean | undefined;
             }
-          | undefined
+          | undefined,
       ): Promise<MagicArray<Scry.Card, never>> {
         throw new Error("Function not implemented.");
       },

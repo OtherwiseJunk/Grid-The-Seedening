@@ -6,19 +6,24 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "start": "node --loader ts-node/esm main.ts"
+    "start": "node --loader ts-node/esm main.ts",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check ."
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@types/node-schedule": "^2.1.5",
+    "oxfmt": "^0.13.0",
+    "oxlint": "^1.28.0",
     "prisma": "^6.19.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "vitest": "^3.2.4",
-    "oxfmt": "^0.13.0",
-    "oxlint": "^1.28.0"
+    "vitest-mock-extended": "^3.1.0"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",

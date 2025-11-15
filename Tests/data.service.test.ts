@@ -40,7 +40,7 @@ describe("Data Service", () => {
 
       expect(gameDate).not.toBe(undefined);
       expect(gameDate!.toDateString()).toBe(
-        new Date("06/21/1984").toDateString()
+        new Date("06/21/1984").toDateString(),
       );
     });
   });
@@ -50,19 +50,19 @@ describe("Data Service", () => {
       "($invalidDateString) -> undefined",
       (testCase) => {
         expect(dataService.dateStringToDate(testCase.invalidDateString)).toBe(
-          undefined
+          undefined,
         );
-      }
+      },
     );
 
     test("should return expected datetime for valid string", () => {
       const dateOne = dataService.dateStringToDate("19841131");
       expect(dateOne!.toDateString()).toBe(
-        new Date("12/31/1984").toDateString()
+        new Date("12/31/1984").toDateString(),
       );
       const dateTwo = dataService.dateStringToDate("19840001");
       expect(dateTwo!.toDateString()).toBe(
-        new Date("01/01/1984").toDateString()
+        new Date("01/01/1984").toDateString(),
       );
     });
   });

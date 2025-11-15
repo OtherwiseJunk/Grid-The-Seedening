@@ -34,12 +34,12 @@ async function generatePuzzles(puzzleCount: number, dayOffset: number) {
     const puzzle = await generateValidPuzzle(deckMap);
     logPuzzle(puzzle);
     const dateStringFromOffset = griddening.getDateStringByOffset(
-      dayOffset + i
+      dayOffset + i,
     );
     console.log(`Creating game in DB for ${dateStringFromOffset}`);
     await dataService.createNewGame(
       griddening.getDateStringByOffset(dayOffset + i),
-      [...puzzle.topRow, ...puzzle.sideRow]
+      [...puzzle.topRow, ...puzzle.sideRow],
     );
     console.log("\r\n\r\n");
     console.log("Generating next puzzle...");
@@ -47,7 +47,7 @@ async function generatePuzzles(puzzleCount: number, dayOffset: number) {
 }
 
 async function generateValidPuzzle(
-  deckMap: Map<ConstraintType, GameConstraint[]>
+  deckMap: Map<ConstraintType, GameConstraint[]>,
 ): Promise<Puzzle> {
   let puzzle = griddening.generateRandomPuzzleBoard(cloneMapOfDecks(deckMap));
   while (puzzle == undefined) {
@@ -67,7 +67,7 @@ async function generateValidPuzzle(
       console.log("Puzzle is valid!");
       const timeTaken = Date.now() - start;
       console.log(
-        `Total time taken to generate valid puzzle: ${timeTaken / 1000} seconds`
+        `Total time taken to generate valid puzzle: ${timeTaken / 1000} seconds`,
       );
       console.log(`Number of rerolls: ${rerollCount}`);
       rerollCount = 0;
@@ -90,7 +90,7 @@ async function generateValidPuzzle(
 
 async function intersectionsAreValid(
   sideRow: GameConstraint[],
-  topRow: GameConstraint[]
+  topRow: GameConstraint[],
 ) {
   let intersectionsValid = true;
   intersectionsValid =
@@ -126,39 +126,39 @@ async function intersectionsAreValid(
 
 function rerollPuzzle(
   deckMap: Map<ConstraintType, GameConstraint[]>,
-  puzzle: Puzzle
+  puzzle: Puzzle,
 ): Puzzle {
   switch (puzzle!.type) {
     case PuzzleType.ArtistFocused:
       return griddening.generateRandomArtistBoard(
         cloneMapOfDecks(deckMap),
-        puzzle!.subType!
+        puzzle!.subType!,
       );
     case PuzzleType.Colorless:
       return griddening.generateRandomColorlessBoard(
         cloneMapOfDecks(deckMap),
-        puzzle!.subType!
+        puzzle!.subType!,
       );
     case PuzzleType.TwoColors:
       return griddening.generateRandomTwoColorBoard(
         cloneMapOfDecks(deckMap),
-        puzzle!.subType!
+        puzzle!.subType!,
       );
     case PuzzleType.CreatureFocused:
       return griddening.generateRandomCreatureBoard(
         cloneMapOfDecks(deckMap),
-        puzzle!.subType!
+        puzzle!.subType!,
       );
     case PuzzleType.FourColors:
       return griddening.generateRandomFourColorBoard(
         cloneMapOfDecks(deckMap),
-        puzzle!.subType!
+        puzzle!.subType!,
       );
   }
 }
 function logPuzzle(puzzle: Puzzle) {
   console.log(
-    `Generated puzzle of type ${puzzle?.type} with subtype ${puzzle?.subType}`
+    `Generated puzzle of type ${puzzle?.type} with subtype ${puzzle?.subType}`,
   );
   console.log("\r\nTop Row:");
   console.log(`${puzzle?.topRow[0].displayName}`);
@@ -173,7 +173,7 @@ function logPuzzle(puzzle: Puzzle) {
 export function calculateOffsetFromToday(date: Date) {
   const now = new Date();
   const difference = Math.ceil(
-    Math.round(date.getTime() - now.getTime()) / (1000 * 3600 * 24)
+    Math.round(date.getTime() - now.getTime()) / (1000 * 3600 * 24),
   );
   return difference;
 }

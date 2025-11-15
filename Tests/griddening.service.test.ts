@@ -41,10 +41,10 @@ describe("Griddening Service", () => {
       "(%o) -> %o",
       (scrySet, expectedResult) => {
         const isPioneerSet = griddeningService.isPioneerSet(
-          scrySet as Scry.Set
+          scrySet as Scry.Set,
         );
         expect(isPioneerSet).toBe(expectedResult);
-      }
+      },
     );
   });
 
@@ -56,12 +56,12 @@ describe("Griddening Service", () => {
           "1993-01-01",
           setType,
           "f",
-          setType
+          setType,
         );
         expect(griddeningService.sanitizeSet(filteredScryfallSet).name).toBe(
-          filteredScryfallSet.name
+          filteredScryfallSet.name,
         );
-      }
+      },
     );
     test.each(namesToSanitizeWithExpectedResult)(
       "(set.setName === %s) -> set.setName === %s",
@@ -69,7 +69,7 @@ describe("Griddening Service", () => {
         const scryfallSet = ScryfallHelper.generateScryfallSet(
           "1993-01-01",
           inputSetName,
-          "f"
+          "f",
         );
         const outputSet = griddeningService.sanitizeSet(scryfallSet);
 
@@ -78,7 +78,7 @@ describe("Griddening Service", () => {
         } else {
           expect(outputSet!.name).toBe(outputSetName);
         }
-      }
+      },
     );
   });
 
@@ -87,22 +87,22 @@ describe("Griddening Service", () => {
       "(%o) -> %o",
       (inputSet, outputConstraint) => {
         const constraint = griddeningService.buildSetConstraintFromScryfallSet(
-          inputSet as Scry.Set
+          inputSet as Scry.Set,
         );
         expect(constraint.displayName).toBe(
-          (outputConstraint as GameConstraint).displayName
+          (outputConstraint as GameConstraint).displayName,
         );
         expect(constraint.constraintType).toBe(ConstraintType.Set);
         expect(constraint.imageAltText).toBe(
-          (outputConstraint as GameConstraint).imageAltText
+          (outputConstraint as GameConstraint).imageAltText,
         );
         expect(constraint.imageSrc).toBe(
-          (outputConstraint as GameConstraint).imageSrc
+          (outputConstraint as GameConstraint).imageSrc,
         );
         expect(constraint.scryfallQuery).toBe(
-          (outputConstraint as GameConstraint).scryfallQuery
+          (outputConstraint as GameConstraint).scryfallQuery,
         );
-      }
+      },
     );
   });
 
@@ -124,8 +124,8 @@ describe("Griddening Service", () => {
       expect(
         await griddeningService.intersectionHasMinimumHits(
           fakeConstraint,
-          fakeConstraint
-        )
+          fakeConstraint,
+        ),
       ).toBeTruthy();
     });
     test("returns false when intersection has less than 10 hits when no MINIMUM_HITS environment varaible is set", async () => {
@@ -133,8 +133,8 @@ describe("Griddening Service", () => {
       expect(
         await griddeningService.intersectionHasMinimumHits(
           fakeConstraint,
-          fakeConstraint
-        )
+          fakeConstraint,
+        ),
       ).toBeFalsy();
     });
     test("returns true when intersection has process.env.MINIMUM_HITS or more hits", async () => {
@@ -142,7 +142,10 @@ describe("Griddening Service", () => {
       process.env.MINIMUM_HITS = "7";
       const service = new GriddeningService(scryfallServiceMock);
       expect(
-        await service.intersectionHasMinimumHits(fakeConstraint, fakeConstraint)
+        await service.intersectionHasMinimumHits(
+          fakeConstraint,
+          fakeConstraint,
+        ),
       ).toBeTruthy();
     });
     test("returns false when intersection has less than process.env.MINIMUM_HITS hits", async () => {
@@ -150,7 +153,10 @@ describe("Griddening Service", () => {
       process.env.MINIMUM_HITS = "7";
       const service = new GriddeningService(scryfallServiceMock);
       expect(
-        await service.intersectionHasMinimumHits(fakeConstraint, fakeConstraint)
+        await service.intersectionHasMinimumHits(
+          fakeConstraint,
+          fakeConstraint,
+        ),
       ).toBeFalsy();
     });
   });
@@ -167,7 +173,7 @@ describe("Griddening Service", () => {
       test(`Should return a puzzle with a type of CreatureFocused Puzzle for subtype ${i}`, async () => {
         const puzzle = griddeningService.generateRandomCreatureBoard(
           copyDeck,
-          i
+          i,
         );
         expect(puzzle.type).toBe(PuzzleType.CreatureFocused);
       });
@@ -175,7 +181,7 @@ describe("Griddening Service", () => {
       test(`Should return a puzzle.subType of ${i} for subtype ${i}`, async () => {
         const puzzle = griddeningService.generateRandomCreatureBoard(
           copyDeck,
-          i
+          i,
         );
         expect(puzzle.subType).toBe(i);
       });
@@ -188,30 +194,30 @@ describe("Griddening Service", () => {
 
       expect(
         puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Power)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureJobTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.Toughness
-        ).length
+          (c) => c.constraintType === ConstraintType.Toughness,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes,
+        ).length,
       ).toBe(1);
     });
 
@@ -222,30 +228,30 @@ describe("Griddening Service", () => {
 
       expect(
         puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Power)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureJobTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureRulesText
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureRulesText,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes,
+        ).length,
       ).toBe(1);
     });
 
@@ -256,31 +262,31 @@ describe("Griddening Service", () => {
 
       expect(
         puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureRulesText
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureRulesText,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureJobTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.Toughness
-        ).length
+          (c) => c.constraintType === ConstraintType.Toughness,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes,
+        ).length,
       ).toBe(1);
     });
 
@@ -291,30 +297,30 @@ describe("Griddening Service", () => {
 
       expect(
         puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter((c) => c.constraintType === ConstraintType.Rarity)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.topRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureJobTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureJobTypes,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter((c) => c.constraintType === ConstraintType.Color)
-          .length
+          .length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.ManaValue
-        ).length
+          (c) => c.constraintType === ConstraintType.ManaValue,
+        ).length,
       ).toBe(1);
       expect(
         puzzle.sideRow.filter(
-          (c) => c.constraintType === ConstraintType.CreatureRaceTypes
-        ).length
+          (c) => c.constraintType === ConstraintType.CreatureRaceTypes,
+        ).length,
       ).toBe(1);
     });
   });
