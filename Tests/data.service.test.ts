@@ -33,36 +33,35 @@ describe("Data Service", () => {
     });
 
     test("() -> most recent date", async () => {
-      prismaMock.game.findMany.mockResolvedValue(games);
+      prismaMock.game.findFirst.mockResolvedValue(games[1]);
 
       const gameDate: Date | undefined =
         await dataService.getDateOfNewestGame();
 
       expect(gameDate).not.toBe(undefined);
       expect(gameDate!.toDateString()).toBe(
-        new Date("06/21/1984").toDateString(),
+        new Date("05/21/1984").toDateString(),
       );
     });
   });
 
   describe("dateStringToDate", () => {
     test.each(invalidDateStrings)(
-      "($invalidDateString) -> undefined",
-      (testCase) => {
-        expect(dataService.dateStringToDate(testCase.invalidDateString)).toBe(
-          undefined,
-        );
+      "('$invalidDateString') -> undefined",
+      ({ invalidDateString }) => {
+        const result = dataService.dateStringToDate(invalidDateString);
+        expect(result).toBe(undefined);
       },
     );
 
     test("should return expected datetime for valid string", () => {
-      const dateOne = dataService.dateStringToDate("19841131");
+      const dateOne = dataService.dateStringToDate("19841231");
       expect(dateOne!.toDateString()).toBe(
         new Date("12/31/1984").toDateString(),
       );
-      const dateTwo = dataService.dateStringToDate("19840001");
+      const dateTwo = dataService.dateStringToDate("19840101");
       expect(dateTwo!.toDateString()).toBe(
-        new Date("01/01/1984").toDateString(),
+        new Date(1984, 0, 1).toDateString(),
       );
     });
   });

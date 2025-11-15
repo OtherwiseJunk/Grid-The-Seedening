@@ -16,6 +16,13 @@ const puzzleBuffer = 5;
 
 async function start() {
   const date = await dataService.getDateOfNewestGame();
+
+  if (date == undefined) {
+    console.log("No games found in DB, starting from scratch.");
+    await generatePuzzles(puzzleBuffer, 0);
+    return;
+  }
+
   const offset = calculateOffsetFromToday(date!);
   console.log(`Offset from today: ${offset}`);
   const puzzlesToCreate = puzzleBuffer - offset;

@@ -1,4 +1,4 @@
-FROM node:18-bullseye-slim
+FROM node:24-bullseye-slim
 
 # Copy local code to the container image
 WORKDIR /usr/src/app

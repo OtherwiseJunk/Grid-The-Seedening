@@ -2,16 +2,18 @@ import { Game, PrismaClient } from "@prisma/client";
 import { GameConstraint } from "../types/GameConstraint.js";
 
 export class DataService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   async getDateOfNewestGame(): Promise<Date | undefined> {
-    const games = await this.prisma.game.findMany();
+    const latestGame = await this.prisma.game.findFirst({
+      orderBy: {
+        dateString: "desc",
+      },
+    });
 
-    if (games === undefined) return games;
-
-    const latestGame = games.sort(
-      (gameA, gameB) => parseInt(gameB.dateString) - parseInt(gameA.dateString),
-    )[0];
+    if (!latestGame) {
+      return undefined;
+    }
 
     return this.dateStringToDate(latestGame.dateString);
   }
@@ -32,9 +34,9 @@ export class DataService {
     if (dateString == null || dateString.length != 8) return undefined;
 
     const year = parseInt(dateString.substring(0, 4));
-    const month = parseInt(dateString.substring(4, 6));
+    const month = parseInt(dateString.substring(4, 6)) - 1; // Date months are 0-indexed
     const day = parseInt(dateString.substring(6));
 
-    return new Date(`${month + 1}/${day}/${year}`);
+    return new Date(year, month, day);
   }
 }

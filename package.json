@@ -10,7 +10,10 @@
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "format": "oxfmt .",
-    "format:check": "oxfmt --check ."
+    "format:check": "oxfmt --check .",
+    "db:setup": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
+    "db:push": "prisma db push"
   },
   "author": "",
   "license": "ISC",
