@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@types/node-schedule": "^2.1.5",
+    "@vitest/coverage-v8": "^3.2.4",
     "oxfmt": "^0.13.0",
     "oxlint": "^1.28.0",
     "prisma": "^6.19.0",
