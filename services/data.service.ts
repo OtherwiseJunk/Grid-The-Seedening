@@ -2,7 +2,7 @@ import { Game, PrismaClient } from "@prisma/client";
 import { GameConstraint } from "../types/GameConstraint.js";
 
 export class DataService {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   async getDateOfNewestGame(): Promise<Date | undefined> {
     const latestGame = await this.prisma.game.findFirst({

@@ -30,12 +30,6 @@ describe("Griddening Service", () => {
     });
   });
 
-  describe("selectValidConstraints", () => {
-    test("", () => {
-      expect(true).toBeTruthy();
-    });
-  });
-
   describe("isPioneerSet", () => {
     test.each(setsWithExpectedIsPioneerReturns)(
       "(%o) -> %o",
@@ -322,6 +316,55 @@ describe("Griddening Service", () => {
           (c) => c.constraintType === ConstraintType.CreatureRaceTypes,
         ).length,
       ).toBe(1);
+    });
+  });
+
+  describe("empty constraint deck", () => {
+    test("should throw when a skeleton deck is empty", () => {
+      const emptyDecks = new Map<ConstraintType, GameConstraint[]>([
+        [ConstraintType.Set, []],
+        [ConstraintType.Color, []],
+        [ConstraintType.ManaValue, []],
+        [ConstraintType.Rarity, []],
+        [ConstraintType.Type, []],
+        [ConstraintType.Power, []],
+        [ConstraintType.Toughness, []],
+        [ConstraintType.Artist, []],
+        [ConstraintType.CreatureRulesText, []],
+        [ConstraintType.CreatureRaceTypes, []],
+        [ConstraintType.CreatureJobTypes, []],
+        [ConstraintType.EnchantmentSubtypes, []],
+        [ConstraintType.ArtifactSubtypes, []],
+      ]);
+
+      expect(() =>
+        griddeningService.generateRandomCreatureBoard(emptyDecks, 0),
+      ).toThrow("Constraint deck is empty");
+
+      expect(() =>
+        griddeningService.generateRandomFourColorBoard(emptyDecks, 0),
+      ).toThrow("Constraint deck is empty");
+
+      expect(() =>
+        griddeningService.generateRandomTwoColorBoard(emptyDecks, 0),
+      ).toThrow("Constraint deck is empty");
+
+      expect(() =>
+        griddeningService.generateRandomArtistBoard(emptyDecks, 0),
+      ).toThrow("Constraint deck is empty");
+    });
+
+    test("should throw when a layout deck runs out of entries", async () => {
+      const mapOfDecks = await griddeningService.createConstraintDeck();
+      const sparseDecks = cloneMapOfDecks(mapOfDecks);
+      // Keep only 1 color constraint — skeleton needs 2 for FourColors
+      sparseDecks.set(ConstraintType.Color, [
+        new GameConstraint("Red", ConstraintType.Color, "c:R"),
+      ]);
+
+      expect(() =>
+        griddeningService.generateRandomFourColorBoard(sparseDecks, 0),
+      ).toThrow("Constraint deck is empty");
     });
   });
 

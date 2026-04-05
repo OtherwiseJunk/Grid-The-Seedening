@@ -177,33 +177,25 @@ export const creatureRulesTextConstraints: GameConstraint[] = [
 ];
 
 export const artistConstraints: GameConstraint[] = [
-  new GameConstraint("Artist: Rebecca Guay", ConstraintType.Artist, `a:Guay`),
-  new GameConstraint("Artist: John Avon", ConstraintType.Artist, `a:Avon`),
+  new GameConstraint("Rebecca Guay", ConstraintType.Artist, `a:Guay`),
+  new GameConstraint("John Avon", ConstraintType.Artist, `a:Avon`),
   new GameConstraint(
-    "Artist: Magali Villeneuve",
+    "Magali Villeneuve",
     ConstraintType.Artist,
     "a:Villeneuve",
   ),
-  new GameConstraint(
-    "Artist: Alayna Danner",
-    ConstraintType.Artist,
-    "a:Danner",
-  ),
-  new GameConstraint("Artist: Kev Walker", ConstraintType.Artist, "a:Walker"),
-  new GameConstraint("Artist: Sam Burley", ConstraintType.Artist, "a:Burley"),
-  new GameConstraint("Artist: Mark Poole", ConstraintType.Artist, "a:Poole"),
-  new GameConstraint("Artist: Chris Rahn", ConstraintType.Artist, "a:Rahn"),
-  new GameConstraint("Artist: Nils Hamm", ConstraintType.Artist, "a:Hamm"),
-  new GameConstraint("Artist: Johannes Voss", ConstraintType.Artist, "a:Voss"),
-  new GameConstraint("Artist: Thomas Baxa", ConstraintType.Artist, "a:Baxa"),
-  new GameConstraint(
-    "Artist: Wayne Reynolds",
-    ConstraintType.Artist,
-    "a:Reynolds",
-  ),
-  new GameConstraint("Artist: Randy Vargas", ConstraintType.Artist, "a:Vargas"),
-  new GameConstraint("Artist: Livia Prima", ConstraintType.Artist, "a:Prima"),
-  new GameConstraint("Artist: Volkan Baga", ConstraintType.Artist, "a:Baga"),
+  new GameConstraint("Alayna Danner", ConstraintType.Artist, "a:Danner"),
+  new GameConstraint("Kev Walker", ConstraintType.Artist, "a:Walker"),
+  new GameConstraint("Sam Burley", ConstraintType.Artist, "a:Burley"),
+  new GameConstraint("Mark Poole", ConstraintType.Artist, "a:Poole"),
+  new GameConstraint("Chris Rahn", ConstraintType.Artist, "a:Rahn"),
+  new GameConstraint("Nils Hamm", ConstraintType.Artist, "a:Hamm"),
+  new GameConstraint("Johannes Voss", ConstraintType.Artist, "a:Voss"),
+  new GameConstraint("Thomas Baxa", ConstraintType.Artist, "a:Baxa"),
+  new GameConstraint("Wayne Reynolds", ConstraintType.Artist, "a:Reynolds"),
+  new GameConstraint("Randy Vargas", ConstraintType.Artist, "a:Vargas"),
+  new GameConstraint("Livia Prima", ConstraintType.Artist, "a:Prima"),
+  new GameConstraint("Volkan Baga", ConstraintType.Artist, "a:Baga"),
 ];
 
 export const colorConstraints: GameConstraint[] = [
