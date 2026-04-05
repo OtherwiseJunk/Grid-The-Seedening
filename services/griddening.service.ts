@@ -19,6 +19,60 @@ import {
   colorless,
 } from "../constants/constraintTypes.js";
 
+type SlotLayout = { top: string[]; side: string[] };
+
+const fourColorLayouts: SlotLayout[] = [
+  { top: ["set"], side: ["type"] },
+  { top: ["rarity"], side: ["manaValue"] },
+  { top: ["artist"], side: ["set"] },
+  { top: ["type"], side: ["rarity"] },
+  { top: ["manaValue"], side: ["artist"] },
+  { top: ["set"], side: ["manaValue"] },
+  { top: ["set"], side: ["rarity"] },
+  { top: ["manaValue"], side: ["type"] },
+];
+
+const twoColorLayouts: SlotLayout[] = [
+  { top: ["set", "rarity"], side: ["type", "manaValue"] },
+  { top: ["set", "rarity"], side: ["rarity", "manaValue"] },
+  { top: ["set", "type"], side: ["type", "artist"] },
+  { top: ["set", "rarity"], side: ["artist", "manaValue"] },
+  { top: ["artist", "rarity"], side: ["type", "manaValue"] },
+  { top: ["set", "artist"], side: ["type", "manaValue"] },
+  { top: ["artist", "rarity"], side: ["manaValue", "type"] },
+  { top: ["artist", "rarity"], side: ["manaValue", "color"] },
+];
+
+const creatureLayouts: SlotLayout[] = [
+  { top: ["power"], side: ["toughness"] },
+  { top: ["power"], side: ["creatureRulesText"] },
+  { top: ["creatureRulesText"], side: ["toughness"] },
+  { top: ["rarity"], side: ["manaValue"] },
+];
+
+const artistLayouts: SlotLayout[] = [
+  { top: ["artist", "artist"], side: ["color", "type", "rarity"] },
+  { top: ["color", "artist"], side: ["color", "type", "rarity"] },
+  { top: ["manaValue", "color"], side: ["color", "type", "rarity"] },
+  { top: ["artist", "artist"], side: ["manaValue", "type", "rarity"] },
+  { top: ["color", "artist"], side: ["manaValue", "type", "rarity"] },
+  { top: ["color", "color"], side: ["manaValue", "type", "rarity"] },
+  { top: ["artist", "artist"], side: ["color", "manaValue", "rarity"] },
+  { top: ["type", "artist"], side: ["color", "manaValue", "rarity"] },
+  { top: ["type", "type"], side: ["color", "manaValue", "rarity"] },
+];
+
+const colorlessLayouts: SlotLayout[] = [
+  { top: ["rarity", "manaValue"], side: ["artist", "set"] },
+  { top: ["rarity", "manaValue"], side: ["filteredType", "set"] },
+  { top: ["rarity", "manaValue"], side: ["filteredType", "artist"] },
+  { top: ["rarity", "set"], side: ["filteredType", "filteredType"] },
+  { top: ["manaValue", "set"], side: ["filteredType", "filteredType"] },
+  { top: ["rarity", "manaValue"], side: ["set", "set"] },
+  { top: ["color", "manaValue"], side: ["set", "set"] },
+  { top: ["color", "set"], side: ["artist", "manaValue"] },
+];
+
 export class GriddeningService {
   constructor(private scryfallService: IScryfallService) {}
   minimumHits = process.env.MINIMUM_HITS
@@ -30,40 +84,31 @@ export class GriddeningService {
   ) {
     const boardType = this.getRandomInt(5);
     console.log(`got puzzle type ${PuzzleType[boardType]}`);
-    let boardSubtype: number;
+    const boardSubtype = this.getRandomSubtype(boardType);
+    console.log(`Got subtype: ${boardSubtype}`);
+
     switch (boardType) {
       case PuzzleType.CreatureFocused:
-        boardSubtype = this.getRandomInt(4);
-        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomCreatureBoard(
           constraintDeckByConstraintType,
           boardSubtype,
         );
       case PuzzleType.FourColors:
-        boardSubtype = this.getRandomInt(8);
-        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomFourColorBoard(
           constraintDeckByConstraintType,
           boardSubtype,
         );
-        break;
       case PuzzleType.TwoColors:
-        boardSubtype = this.getRandomInt(8);
-        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomTwoColorBoard(
           constraintDeckByConstraintType,
           boardSubtype,
         );
       case PuzzleType.Colorless:
-        boardSubtype = this.getRandomInt(8);
-        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomColorlessBoard(
           constraintDeckByConstraintType,
           boardSubtype,
         );
       case PuzzleType.ArtistFocused:
-        boardSubtype = this.getRandomInt(9);
-        console.log(`Got subtype: ${boardSubtype}`);
         return this.generateRandomArtistBoard(
           constraintDeckByConstraintType,
           boardSubtype,
@@ -75,61 +120,16 @@ export class GriddeningService {
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
     fourColorBoardType: number,
   ): Puzzle {
-    const [
-      setConstraints,
-      colorConstraints,
-      cardTypeConstraints,
-      rarityConstraints,
-      manaValueConstraints,
-      artistConstraints,
-    ] = this.getColorFocusedDecks(constraintDeckByConstraintType);
-    const puzzle = {
-      topRow: [
-        colorConstraints.shift() as GameConstraint,
-        colorConstraints.shift() as GameConstraint,
-      ],
-      sideRow: [
-        colorConstraints.shift() as GameConstraint,
-        colorConstraints.shift() as GameConstraint,
-      ],
+    const [set, color, type, rarity, manaValue, artist] =
+      this.getColorFocusedDecks(constraintDeckByConstraintType);
+    const decks = { set, color, type, rarity, manaValue, artist };
+    const puzzle: Puzzle = {
+      topRow: [color.shift() as GameConstraint, color.shift() as GameConstraint],
+      sideRow: [color.shift() as GameConstraint, color.shift() as GameConstraint],
       type: PuzzleType.FourColors,
       subType: fourColorBoardType,
-    } as Puzzle;
-
-    switch (fourColorBoardType) {
-      case 0:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        break;
-      case 1:
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        break;
-      case 2:
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
-        break;
-      case 3:
-        puzzle.topRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 4:
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(artistConstraints.shift() as GameConstraint);
-        break;
-      case 5:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        break;
-      case 6:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 7:
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        break;
-    }
+    };
+    this.fillFromLayout(puzzle, fourColorLayouts[fourColorBoardType], decks);
     return puzzle;
   }
 
@@ -137,72 +137,16 @@ export class GriddeningService {
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
     twoColorBoardType: number,
   ): Puzzle {
-    const [
-      setConstraints,
-      colorConstraints,
-      cardTypeConstraints,
-      rarityConstraints,
-      manaValueConstraints,
-      artistConstraints,
-    ] = this.getColorFocusedDecks(constraintDeckByConstraintType);
-    const puzzle = {
-      topRow: [colorConstraints.shift() as GameConstraint],
-      sideRow: [colorConstraints.shift() as GameConstraint],
+    const [set, color, type, rarity, manaValue, artist] =
+      this.getColorFocusedDecks(constraintDeckByConstraintType);
+    const decks = { set, color, type, rarity, manaValue, artist };
+    const puzzle: Puzzle = {
+      topRow: [color.shift() as GameConstraint],
+      sideRow: [color.shift() as GameConstraint],
       type: PuzzleType.TwoColors,
       subType: twoColorBoardType,
-    } as Puzzle;
-
-    switch (twoColorBoardType) {
-      case 0:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        break;
-      case 1:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        break;
-      case 2:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(artistConstraints.shift() as GameConstraint);
-        break;
-      case 3:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        break;
-      case 4:
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        break;
-      case 5:
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        break;
-      case 6:
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        break;
-      case 7:
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-        break;
-    }
-
+    };
+    this.fillFromLayout(puzzle, twoColorLayouts[twoColorBoardType], decks);
     return puzzle;
   }
 
@@ -210,50 +154,16 @@ export class GriddeningService {
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
     creatureBoardType: number,
   ): Puzzle {
-    const [
-      creatureRaceConstraints,
-      creatureJobConstraints,
-      creatureRulesTextConstraints,
-      colorConstraints,
-      powerConstraints,
-      toughnessConstraints,
-      rarityConstraints,
-      manaValueConstraints,
-    ] = this.getCreatureDecks(constraintDeckByConstraintType);
-    const puzzle = {
+    const [creatureRace, creatureJob, creatureRulesText, color, power, toughness, rarity, manaValue] =
+      this.getCreatureDecks(constraintDeckByConstraintType);
+    const decks = { creatureRace, creatureJob, creatureRulesText, color, power, toughness, rarity, manaValue };
+    const puzzle: Puzzle = {
       type: PuzzleType.CreatureFocused,
       subType: creatureBoardType,
-      topRow: [],
-      sideRow: [],
-    } as Puzzle;
-
-    puzzle.topRow.push(creatureJobConstraints.shift() as GameConstraint);
-    puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-    puzzle.sideRow.push(creatureRaceConstraints.shift() as GameConstraint);
-    puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-
-    switch (creatureBoardType) {
-      case 0:
-        puzzle.topRow.push(powerConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(toughnessConstraints.shift() as GameConstraint);
-        break;
-      case 1:
-        puzzle.topRow.push(powerConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(
-          creatureRulesTextConstraints.shift() as GameConstraint,
-        );
-        break;
-      case 2:
-        puzzle.topRow.push(
-          creatureRulesTextConstraints.shift() as GameConstraint,
-        );
-        puzzle.sideRow.push(toughnessConstraints.shift() as GameConstraint);
-        break;
-      case 3:
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-    }
-
+      topRow: [creatureJob.shift() as GameConstraint, color.shift() as GameConstraint],
+      sideRow: [creatureRace.shift() as GameConstraint, color.shift() as GameConstraint],
+    };
+    this.fillFromLayout(puzzle, creatureLayouts[creatureBoardType], decks);
     return puzzle;
   }
 
@@ -261,89 +171,16 @@ export class GriddeningService {
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
     colorBoardType: number,
   ): Puzzle {
-    const [
-      colorConstraints,
-      cardTypeConstraints,
-      rarityConstraints,
-      manaValueConstraints,
-      artistConstraints,
-    ] = this.getDefaultDecks(constraintDeckByConstraintType);
-
-    const puzzle = {
+    const [color, type, rarity, manaValue, artist] =
+      this.getDefaultDecks(constraintDeckByConstraintType);
+    const decks = { color, type, rarity, manaValue, artist };
+    const puzzle: Puzzle = {
       type: PuzzleType.ArtistFocused,
       subType: colorBoardType,
-      topRow: [],
+      topRow: [artist.shift() as GameConstraint],
       sideRow: [],
-    } as Puzzle;
-
-    puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-
-    switch (colorBoardType) {
-      case 0:
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 1:
-        puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 2:
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 3:
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 4:
-        puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 5:
-        puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 6:
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 7:
-        puzzle.topRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-      case 8:
-        puzzle.topRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(cardTypeConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(rarityConstraints.shift() as GameConstraint);
-        break;
-    }
-
+    };
+    this.fillFromLayout(puzzle, artistLayouts[colorBoardType], decks);
     return puzzle;
   }
 
@@ -351,94 +188,44 @@ export class GriddeningService {
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
     colorlessBoardType: number,
   ): Puzzle {
-    const [
-      setConstraints,
-      colorConstraints,
-      cardTypeConstraints,
-      rarityConstraints,
-      manaValueConstraints,
-      artistConstraints,
-    ] = this.getColorFocusedDecks(constraintDeckByConstraintType);
-    const puzzle = {
+    const [set, color, type, rarity, manaValue, artist] =
+      this.getColorFocusedDecks(constraintDeckByConstraintType);
+    const filteredType = type.filter((constraint) =>
+      ["Land", "Artifact", "Creature", "Instant", "Sorcery"].includes(constraint.displayName),
+    );
+    const decks = { set, color, type, rarity, manaValue, artist, filteredType };
+    const puzzle: Puzzle = {
       topRow: [colorless],
       sideRow: [nonLandNonArtifact],
       type: PuzzleType.Colorless,
       subType: colorlessBoardType,
-    } as Puzzle;
-    const filteredCardTypeConstraints = cardTypeConstraints.filter(
-      (constraint) => {
-        return (
-          constraint.displayName == "Land" ||
-          constraint.displayName == "Artifact" ||
-          constraint.displayName == "Creature" ||
-          constraint.displayName == "Instant" ||
-          constraint.displayName == "Sorcery"
-        );
-      },
-    );
-    switch (colorlessBoardType) {
-      case 0:
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
-        break;
-      case 1:
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint,
-        );
-        puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
-        break;
-      case 2:
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint,
-        );
-        puzzle.sideRow.push(artistConstraints.shift() as GameConstraint);
-        break;
-      case 3:
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint,
-        );
-        puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint,
-        );
-        break;
-      case 4:
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint,
-        );
-        puzzle.sideRow.push(
-          filteredCardTypeConstraints.shift() as GameConstraint,
-        );
-        break;
-      case 5:
-        puzzle.topRow.push(rarityConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
-        break;
-      case 6:
-        puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(manaValueConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(setConstraints.shift() as GameConstraint);
-        break;
-      case 7:
-        puzzle.topRow.push(colorConstraints.shift() as GameConstraint);
-        puzzle.topRow.push(setConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(artistConstraints.shift() as GameConstraint);
-        puzzle.sideRow.push(manaValueConstraints.shift() as GameConstraint);
-    }
-
+    };
+    this.fillFromLayout(puzzle, colorlessLayouts[colorlessBoardType], decks);
     return puzzle;
+  }
+
+  private fillFromLayout(
+    puzzle: Puzzle,
+    layout: SlotLayout,
+    decks: Record<string, GameConstraint[]>,
+  ) {
+    for (const key of layout.top) {
+      puzzle.topRow.push(decks[key].shift() as GameConstraint);
+    }
+    for (const key of layout.side) {
+      puzzle.sideRow.push(decks[key].shift() as GameConstraint);
+    }
+  }
+
+  private getRandomSubtype(boardType: number): number {
+    const subtypeCounts: Record<number, number> = {
+      [PuzzleType.CreatureFocused]: creatureLayouts.length,
+      [PuzzleType.FourColors]: fourColorLayouts.length,
+      [PuzzleType.TwoColors]: twoColorLayouts.length,
+      [PuzzleType.Colorless]: colorlessLayouts.length,
+      [PuzzleType.ArtistFocused]: artistLayouts.length,
+    };
+    return this.getRandomInt(subtypeCounts[boardType]);
   }
 
   private getDefaultDecks(
