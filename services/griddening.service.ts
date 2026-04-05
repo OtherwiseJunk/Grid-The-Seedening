@@ -2,6 +2,7 @@ import { ConstraintType, GameConstraint } from "../types/GameConstraint.js";
 import * as Scry from "scryfall-sdk";
 import { IScryfallService } from "./scryfall.service.js";
 import { PuzzleType, Puzzle } from "../types/Puzzle.js";
+import { shuffleArray } from "../Utilities/map.helper.js";
 import {
   colorConstraints,
   manaValueConstraints,
@@ -239,27 +240,27 @@ export class GriddeningService {
   private getDefaultDecks(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
   ) {
-    const colorConstraints = this.shuffleArray(
+    const colorConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Color,
       ) as GameConstraint[],
     );
-    const rarityConstraints = this.shuffleArray(
+    const rarityConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Rarity,
       ) as GameConstraint[],
     );
-    const manaValueConstraints = this.shuffleArray(
+    const manaValueConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.ManaValue,
       ) as GameConstraint[],
     );
-    const cardTypeConstraints = this.shuffleArray(
+    const cardTypeConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Type,
       ) as GameConstraint[],
     );
-    const artistConstraints = this.shuffleArray(
+    const artistConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Artist,
       ) as GameConstraint[],
@@ -277,7 +278,7 @@ export class GriddeningService {
   private getColorFocusedDecks(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
   ) {
-    const setConstraints = this.shuffleArray(
+    const setConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Set,
       ) as GameConstraint[],
@@ -292,42 +293,42 @@ export class GriddeningService {
   private getCreatureDecks(
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
   ) {
-    const creatureRaceConstraints = this.shuffleArray(
+    const creatureRaceConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.CreatureRaceTypes,
       ) as GameConstraint[],
     );
-    const creatureJobConstraints = this.shuffleArray(
+    const creatureJobConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.CreatureJobTypes,
       ) as GameConstraint[],
     );
-    const creatureRulesTextConstraints = this.shuffleArray(
+    const creatureRulesTextConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.CreatureRulesText,
       ) as GameConstraint[],
     );
-    const powerConstraints = this.shuffleArray(
+    const powerConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Power,
       ) as GameConstraint[],
     );
-    const toughnessConstraints = this.shuffleArray(
+    const toughnessConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Toughness,
       ) as GameConstraint[],
     );
-    const colorConstraints = this.shuffleArray(
+    const colorConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Color,
       ) as GameConstraint[],
     );
-    const rarityConstraints = this.shuffleArray(
+    const rarityConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.Rarity,
       ) as GameConstraint[],
     );
-    const manaValueConstraints = this.shuffleArray(
+    const manaValueConstraints = shuffleArray(
       constraintDeckByConstraintType.get(
         ConstraintType.ManaValue,
       ) as GameConstraint[],
@@ -417,36 +418,36 @@ export class GriddeningService {
   }
 
   async createConstraintDeck(): Promise<Map<ConstraintType, GameConstraint[]>> {
-    const setConstraints = this.shuffleArray(await this.getSetConstraints());
+    const setConstraints = shuffleArray(await this.getSetConstraints());
 
     return new Map<ConstraintType, GameConstraint[]>([
       [ConstraintType.Set, setConstraints],
-      [ConstraintType.Color, this.shuffleArray(colorConstraints)],
-      [ConstraintType.ManaValue, this.shuffleArray(manaValueConstraints)],
-      [ConstraintType.Rarity, this.shuffleArray(rarityConstraints)],
-      [ConstraintType.Type, this.shuffleArray(cardTypeConstraints)],
-      [ConstraintType.Power, this.shuffleArray(powerConstraints)],
-      [ConstraintType.Toughness, this.shuffleArray(toughnessConstraints)],
-      [ConstraintType.Artist, this.shuffleArray(artistConstraints)],
+      [ConstraintType.Color, shuffleArray(colorConstraints)],
+      [ConstraintType.ManaValue, shuffleArray(manaValueConstraints)],
+      [ConstraintType.Rarity, shuffleArray(rarityConstraints)],
+      [ConstraintType.Type, shuffleArray(cardTypeConstraints)],
+      [ConstraintType.Power, shuffleArray(powerConstraints)],
+      [ConstraintType.Toughness, shuffleArray(toughnessConstraints)],
+      [ConstraintType.Artist, shuffleArray(artistConstraints)],
       [
         ConstraintType.CreatureRulesText,
-        this.shuffleArray(creatureRulesTextConstraints),
+        shuffleArray(creatureRulesTextConstraints),
       ],
       [
         ConstraintType.CreatureRaceTypes,
-        this.shuffleArray(creatureRaceConstraints),
+        shuffleArray(creatureRaceConstraints),
       ],
       [
         ConstraintType.CreatureJobTypes,
-        this.shuffleArray(creatureJobConstraints),
+        shuffleArray(creatureJobConstraints),
       ],
       [
         ConstraintType.EnchantmentSubtypes,
-        this.shuffleArray(enchantmentSubtypeTypeConstraints),
+        shuffleArray(enchantmentSubtypeTypeConstraints),
       ],
       [
         ConstraintType.ArtifactSubtypes,
-        this.shuffleArray(artifactSubtypesConstraints),
+        shuffleArray(artifactSubtypesConstraints),
       ],
     ]);
   }
@@ -461,13 +462,4 @@ export class GriddeningService {
     return date;
   }
 
-  private shuffleArray<T>(array: T[]): T[] {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
-  }
 }

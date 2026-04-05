@@ -1,4 +1,4 @@
-import { cloneMapOfDecks } from "./Utilities/map.helper.js";
+import { cloneMapOfDecks, shuffleArray } from "./Utilities/map.helper.js";
 import { GriddeningService } from "./services/griddening.service.js";
 import { ScryfallService } from "./services/scryfall.service.js";
 import * as Scry from "scryfall-sdk";
@@ -83,8 +83,8 @@ async function generateValidPuzzle(
       rerollCount++;
     }
   }
-  puzzle.topRow = shuffle<GameConstraint>(puzzle.topRow);
-  puzzle.sideRow = shuffle<GameConstraint>(puzzle.sideRow);
+  puzzle.topRow = shuffleArray<GameConstraint>(puzzle.topRow);
+  puzzle.sideRow = shuffleArray<GameConstraint>(puzzle.sideRow);
 
   if (Math.floor(Math.random() * 2) === 1) {
     const temp = puzzle.topRow;
@@ -161,26 +161,6 @@ export function calculateOffsetFromToday(date: Date) {
     Math.round(date.getTime() - now.getTime()) / (1000 * 3600 * 24),
   );
   return difference;
-}
-
-function shuffle<T>(array: Array<T>) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex > 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
 }
 
 if (!process.env.VITEST) {
