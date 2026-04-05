@@ -30,12 +30,6 @@ describe("Griddening Service", () => {
     });
   });
 
-  describe("selectValidConstraints", () => {
-    test("", () => {
-      expect(true).toBeTruthy();
-    });
-  });
-
   describe("isPioneerSet", () => {
     test.each(setsWithExpectedIsPioneerReturns)(
       "(%o) -> %o",

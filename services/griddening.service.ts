@@ -124,8 +124,8 @@ export class GriddeningService {
       this.getColorFocusedDecks(constraintDeckByConstraintType);
     const decks = { set, color, type, rarity, manaValue, artist };
     const puzzle: Puzzle = {
-      topRow: [color.shift() as GameConstraint, color.shift() as GameConstraint],
-      sideRow: [color.shift() as GameConstraint, color.shift() as GameConstraint],
+      topRow: [this.drawFrom(color), this.drawFrom(color)],
+      sideRow: [this.drawFrom(color), this.drawFrom(color)],
       type: PuzzleType.FourColors,
       subType: fourColorBoardType,
     };
@@ -141,8 +141,8 @@ export class GriddeningService {
       this.getColorFocusedDecks(constraintDeckByConstraintType);
     const decks = { set, color, type, rarity, manaValue, artist };
     const puzzle: Puzzle = {
-      topRow: [color.shift() as GameConstraint],
-      sideRow: [color.shift() as GameConstraint],
+      topRow: [this.drawFrom(color)],
+      sideRow: [this.drawFrom(color)],
       type: PuzzleType.TwoColors,
       subType: twoColorBoardType,
     };
@@ -160,8 +160,8 @@ export class GriddeningService {
     const puzzle: Puzzle = {
       type: PuzzleType.CreatureFocused,
       subType: creatureBoardType,
-      topRow: [creatureJob.shift() as GameConstraint, color.shift() as GameConstraint],
-      sideRow: [creatureRace.shift() as GameConstraint, color.shift() as GameConstraint],
+      topRow: [this.drawFrom(creatureJob), this.drawFrom(color)],
+      sideRow: [this.drawFrom(creatureRace), this.drawFrom(color)],
     };
     this.fillFromLayout(puzzle, creatureLayouts[creatureBoardType], decks);
     return puzzle;
@@ -177,7 +177,7 @@ export class GriddeningService {
     const puzzle: Puzzle = {
       type: PuzzleType.ArtistFocused,
       subType: colorBoardType,
-      topRow: [artist.shift() as GameConstraint],
+      topRow: [this.drawFrom(artist)],
       sideRow: [],
     };
     this.fillFromLayout(puzzle, artistLayouts[colorBoardType], decks);
@@ -204,16 +204,24 @@ export class GriddeningService {
     return puzzle;
   }
 
+  private drawFrom(deck: GameConstraint[]): GameConstraint {
+    const constraint = deck.shift();
+    if (!constraint) {
+      throw new Error("Constraint deck is empty — not enough constraints to build puzzle");
+    }
+    return constraint;
+  }
+
   private fillFromLayout(
     puzzle: Puzzle,
     layout: SlotLayout,
     decks: Record<string, GameConstraint[]>,
   ) {
     for (const key of layout.top) {
-      puzzle.topRow.push(decks[key].shift() as GameConstraint);
+      puzzle.topRow.push(this.drawFrom(decks[key]));
     }
     for (const key of layout.side) {
-      puzzle.sideRow.push(decks[key].shift() as GameConstraint);
+      puzzle.sideRow.push(this.drawFrom(decks[key]));
     }
   }
 
@@ -397,13 +405,6 @@ export class GriddeningService {
       .map((set) => this.sanitizeSet(set))
       .filter(this.isPioneerSet)
       .map(this.buildSetConstraintFromScryfallSet);
-  }
-
-  async selectValidConstraints(
-    constraintMap: Map<ConstraintType, GameConstraint[]>,
-  ): Promise<GameConstraint[]> {
-    console.log(constraintMap);
-    return [];
   }
 
   async intersectionHasMinimumHits(

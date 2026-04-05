@@ -23,7 +23,7 @@ async function start() {
     return;
   }
 
-  const offset = calculateOffsetFromToday(date!);
+  const offset = calculateOffsetFromToday(date);
   console.log(`Offset from today: ${offset}`);
   const puzzlesToCreate = puzzleBuffer - offset;
   if (puzzlesToCreate > 0) {
@@ -99,36 +99,14 @@ async function intersectionsAreValid(
   sideRow: GameConstraint[],
   topRow: GameConstraint[],
 ) {
-  let intersectionsValid = true;
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[0]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[1]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[0], sideRow[2]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[0]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[1]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[1], sideRow[2]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[0]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[1]));
-  intersectionsValid =
-    intersectionsValid &&
-    (await griddening.intersectionHasMinimumHits(topRow[2], sideRow[2]));
-
-  return intersectionsValid;
+  for (const top of topRow) {
+    for (const side of sideRow) {
+      if (!(await griddening.intersectionHasMinimumHits(top, side))) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 function rerollPuzzle(
@@ -185,12 +163,6 @@ export function calculateOffsetFromToday(date: Date) {
   return difference;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const job = schedule.scheduleJob("30 00 * * *", () => {
-  console.log("firing job");
-  start();
-});
-
 function shuffle<T>(array: Array<T>) {
   let currentIndex = array.length,
     randomIndex;
@@ -211,7 +183,14 @@ function shuffle<T>(array: Array<T>) {
   return array;
 }
 
-console.log("Scheduled job to run nightly at midnight.");
-console.log("Current time: " + new Date().toLocaleString("en-US"));
-console.log("Running initial generation now.");
-start();
+if (!process.env.VITEST) {
+  schedule.scheduleJob("30 00 * * *", () => {
+    console.log("firing job");
+    start();
+  });
+
+  console.log("Scheduled job to run nightly at midnight.");
+  console.log("Current time: " + new Date().toLocaleString("en-US"));
+  console.log("Running initial generation now.");
+  start();
+}
