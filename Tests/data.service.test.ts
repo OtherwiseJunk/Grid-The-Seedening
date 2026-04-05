@@ -60,9 +60,7 @@ describe("Data Service", () => {
         new Date("12/31/1984").toDateString(),
       );
       const dateTwo = dataService.dateStringToDate("19840101");
-      expect(dateTwo!.toDateString()).toBe(
-        new Date(1984, 0, 1).toDateString(),
-      );
+      expect(dateTwo!.toDateString()).toBe(new Date(1984, 0, 1).toDateString());
     });
   });
 });

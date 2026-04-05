@@ -155,9 +155,26 @@ export class GriddeningService {
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
     creatureBoardType: number,
   ): Puzzle {
-    const [creatureRace, creatureJob, creatureRulesText, color, power, toughness, rarity, manaValue] =
-      this.getCreatureDecks(constraintDeckByConstraintType);
-    const decks = { creatureRace, creatureJob, creatureRulesText, color, power, toughness, rarity, manaValue };
+    const [
+      creatureRace,
+      creatureJob,
+      creatureRulesText,
+      color,
+      power,
+      toughness,
+      rarity,
+      manaValue,
+    ] = this.getCreatureDecks(constraintDeckByConstraintType);
+    const decks = {
+      creatureRace,
+      creatureJob,
+      creatureRulesText,
+      color,
+      power,
+      toughness,
+      rarity,
+      manaValue,
+    };
     const puzzle: Puzzle = {
       type: PuzzleType.CreatureFocused,
       subType: creatureBoardType,
@@ -172,8 +189,9 @@ export class GriddeningService {
     constraintDeckByConstraintType: Map<ConstraintType, GameConstraint[]>,
     colorBoardType: number,
   ): Puzzle {
-    const [color, type, rarity, manaValue, artist] =
-      this.getDefaultDecks(constraintDeckByConstraintType);
+    const [color, type, rarity, manaValue, artist] = this.getDefaultDecks(
+      constraintDeckByConstraintType,
+    );
     const decks = { color, type, rarity, manaValue, artist };
     const puzzle: Puzzle = {
       type: PuzzleType.ArtistFocused,
@@ -192,7 +210,9 @@ export class GriddeningService {
     const [set, color, type, rarity, manaValue, artist] =
       this.getColorFocusedDecks(constraintDeckByConstraintType);
     const filteredType = type.filter((constraint) =>
-      ["Land", "Artifact", "Creature", "Instant", "Sorcery"].includes(constraint.displayName),
+      ["Land", "Artifact", "Creature", "Instant", "Sorcery"].includes(
+        constraint.displayName,
+      ),
     );
     const decks = { set, color, type, rarity, manaValue, artist, filteredType };
     const puzzle: Puzzle = {
@@ -208,7 +228,9 @@ export class GriddeningService {
   private drawFrom(deck: GameConstraint[]): GameConstraint {
     const constraint = deck.shift();
     if (!constraint) {
-      throw new Error("Constraint deck is empty — not enough constraints to build puzzle");
+      throw new Error(
+        "Constraint deck is empty — not enough constraints to build puzzle",
+      );
     }
     return constraint;
   }
@@ -433,14 +455,8 @@ export class GriddeningService {
         ConstraintType.CreatureRulesText,
         shuffleArray(creatureRulesTextConstraints),
       ],
-      [
-        ConstraintType.CreatureRaceTypes,
-        shuffleArray(creatureRaceConstraints),
-      ],
-      [
-        ConstraintType.CreatureJobTypes,
-        shuffleArray(creatureJobConstraints),
-      ],
+      [ConstraintType.CreatureRaceTypes, shuffleArray(creatureRaceConstraints)],
+      [ConstraintType.CreatureJobTypes, shuffleArray(creatureJobConstraints)],
       [
         ConstraintType.EnchantmentSubtypes,
         shuffleArray(enchantmentSubtypeTypeConstraints),
@@ -461,5 +477,4 @@ export class GriddeningService {
     date.setDate(date.getDate() + days);
     return date;
   }
-
 }
