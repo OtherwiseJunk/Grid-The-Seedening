@@ -19,7 +19,7 @@ describe("ScryfallService", () => {
     expect(sets.length).toBeGreaterThan(0);
   });
 
-  test("should get first page card count", async () => {
+  test("should get first page card count", { timeout: 10000 }, async () => {
     const query = "c:Blue";
     const cardCount = await scryfallService.getFirstPageCardCount(query);
     expect(cardCount).toBeTruthy();
