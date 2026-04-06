@@ -45,8 +45,6 @@ jobs:
     - name: 'Test'
       run: npx vitest --coverage.enabled true
     - name: 'Report Coverage'
-      # Set if: always() to also generate the report if tests are failing
-      # Only works if you set `reportOnFailure: true` in your vite config as specified above
       if: always()
       uses:  davelosert/vitest-coverage-report-action@v2
     - name: 'Setup Database'
@@ -61,6 +59,27 @@ jobs:
       run: |
         COUNT=$(psql "$DATABASE_URL" -t -c "SELECT COUNT(*) FROM \"Game\";" | tr -d ' ')
         echo "Games created: $COUNT"
+        if [ "$COUNT" -lt 1 ]; then
+          echo "No games were created!"
+          exit 1
+        fi
+    - name: 'Build Docker Image'
+      run: docker build -t grid-the-seedening:pr-test .
+    - name: 'Reset Database'
+      run: psql "$DATABASE_URL" -c "DELETE FROM \"Game\";"
+    - name: 'Docker Integration Test'
+      run: |
+        docker run --rm \
+          --network host \
+          -e DATABASE_URL="$DATABASE_URL" \
+          -e RUN_ONCE=true \
+          -e MINIMUM_HITS=1 \
+          grid-the-seedening:pr-test
+      timeout-minutes: 5
+    - name: 'Verify Docker Puzzles Created'
+      run: |
+        COUNT=$(psql "$DATABASE_URL" -t -c "SELECT COUNT(*) FROM \"Game\";" | tr -d ' ')
+        echo "Games created by Docker container: $COUNT"
         if [ "$COUNT" -lt 1 ]; then
           echo "No games were created!"
           exit 1
