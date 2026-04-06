@@ -10,4 +10,4 @@ RUN npm i
 RUN npx prisma generate
 
 # Run the app on entry
-ENTRYPOINT [ "npx", "ts-node", "main.ts" ]
+ENTRYPOINT [ "node", "--loader", "ts-node/esm", "main.ts" ]

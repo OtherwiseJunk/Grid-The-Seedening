@@ -25,6 +25,13 @@ async function start() {
 
   const offset = calculateOffsetFromToday(date);
   console.log(`Offset from today: ${offset}`);
+
+  if (offset < 0) {
+    console.log("No puzzle for today — generating today + buffer.");
+    await generatePuzzles(puzzleBuffer, 0);
+    return;
+  }
+
   const puzzlesToCreate = puzzleBuffer - offset;
   if (puzzlesToCreate > 0) {
     console.log(`Creating ${puzzlesToCreate} puzzles`);
@@ -164,13 +171,21 @@ export function calculateOffsetFromToday(date: Date) {
 }
 
 if (!process.env.VITEST) {
-  schedule.scheduleJob("30 00 * * *", () => {
-    console.log("firing job");
-    start();
-  });
+  if (process.env.RUN_ONCE) {
+    console.log("Running single generation (RUN_ONCE mode).");
+    start().then(() => {
+      console.log("Generation complete, exiting.");
+      process.exit(0);
+    });
+  } else {
+    schedule.scheduleJob("30 00 * * *", () => {
+      console.log("firing job");
+      start();
+    });
 
-  console.log("Scheduled job to run nightly at midnight.");
-  console.log("Current time: " + new Date().toLocaleString("en-US"));
-  console.log("Running initial generation now.");
-  start();
+    console.log("Scheduled job to run nightly at midnight.");
+    console.log("Current time: " + new Date().toLocaleString("en-US"));
+    console.log("Running initial generation now.");
+    start();
+  }
 }

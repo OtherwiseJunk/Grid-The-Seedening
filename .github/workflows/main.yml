@@ -19,7 +19,25 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # 
+
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: griddening
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/griddening?schema=public
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,6 +53,22 @@ jobs:
         run: npm run format:check
       - name: 'Test'
         run: npx vitest run
+      - name: 'Setup Database'
+        run: npx prisma db push
+      - name: 'Integration Test - Generate Puzzles'
+        run: node --loader ts-node/esm main.ts
+        env:
+          RUN_ONCE: true
+          MINIMUM_HITS: 1
+        timeout-minutes: 5
+      - name: 'Verify Puzzles Created'
+        run: |
+          COUNT=$(psql "$DATABASE_URL" -t -c "SELECT COUNT(*) FROM \"Game\";" | tr -d ' ')
+          echo "Games created: $COUNT"
+          if [ "$COUNT" -lt 1 ]; then
+            echo "No games were created!"
+            exit 1
+          fi
       # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
