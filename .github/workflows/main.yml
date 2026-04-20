@@ -83,7 +83,7 @@ jobs:
             exit 1
           fi
       - name: 'Reset Database Before Scheduler Test'
-        run: psql "$DATABASE_URL" -c "DELETE FROM \"Game\";"
+        run: psql "${DATABASE_URL%%\?*}" -c "DELETE FROM \"Game\";"
       - name: 'Docker Scheduler Test'
         run: |
           docker run -d --name scheduler-test \
