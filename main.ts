@@ -115,7 +115,9 @@ async function generateValidPuzzle(
         // wrapper) can fire even during cache-hot reroll storms.
         await new Promise<void>((resolve) => setTimeout(resolve, 0));
         console.log(`${rerollCount} rerolls, trying fresh board type...`);
-        puzzle = griddening.generateRandomPuzzleBoard(cloneMapOfDecks(deckMap))!;
+        puzzle = griddening.generateRandomPuzzleBoard(
+          cloneMapOfDecks(deckMap),
+        )!;
       } else {
         puzzle = rerollPuzzle(cloneMapOfDecks(deckMap), puzzle!);
       }
