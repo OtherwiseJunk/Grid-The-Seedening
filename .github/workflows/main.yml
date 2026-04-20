@@ -82,6 +82,27 @@ jobs:
             echo "No games were created!"
             exit 1
           fi
+      - name: 'Reset Database Before Scheduler Test'
+        run: psql "$DATABASE_URL" -c "DELETE FROM \"Game\";"
+      - name: 'Docker Scheduler Test'
+        run: |
+          docker run -d --name scheduler-test \
+            --network host \
+            -e DATABASE_URL="$DATABASE_URL" \
+            -e MINIMUM_HITS=1 \
+            -e CRON_SCHEDULE="*/15 * * * * *" \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:${{ github.sha }}
+          sleep 50
+          docker logs scheduler-test
+          FIRINGS=$(docker logs scheduler-test 2>&1 | grep -c "firing job" || true)
+          docker stop scheduler-test >/dev/null
+          docker rm scheduler-test >/dev/null
+          echo "Scheduler fired $FIRINGS time(s)"
+          if [ "$FIRINGS" -lt 2 ]; then
+            echo "Expected scheduler to fire at least 2 times"
+            exit 1
+          fi
+        timeout-minutes: 3
       # Push only after integration test passes
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1

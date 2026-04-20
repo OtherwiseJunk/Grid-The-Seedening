@@ -13,6 +13,7 @@ const scryfall = new ScryfallService(Scry);
 const griddening = new GriddeningService(scryfall);
 const dataService = new DataService(prisma);
 const puzzleBuffer = 5;
+const puzzleGenerationTimeoutMs = 600_000;
 
 async function start() {
   const date = await dataService.getDateOfNewestGame();
@@ -45,7 +46,7 @@ async function generatePuzzles(puzzleCount: number, dayOffset: number) {
 
   for (let i = 1; i < puzzleCount + 1; i++) {
     console.log(`Generating ${i + 1} puzzle...`);
-    const puzzle = await generateValidPuzzle(deckMap);
+    const puzzle = await generateValidPuzzleWithTimeout(deckMap);
     logPuzzle(puzzle);
     const dateStringFromOffset = griddening.getDateStringByOffset(
       dayOffset + i,
@@ -57,6 +58,28 @@ async function generatePuzzles(puzzleCount: number, dayOffset: number) {
     );
     console.log("\r\n\r\n");
     console.log("Generating next puzzle...");
+  }
+}
+
+async function generateValidPuzzleWithTimeout(
+  deckMap: Map<ConstraintType, GameConstraint[]>,
+): Promise<Puzzle> {
+  let timeoutHandle: NodeJS.Timeout | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutHandle = setTimeout(
+      () =>
+        reject(
+          new Error(
+            `Puzzle generation exceeded ${puzzleGenerationTimeoutMs}ms`,
+          ),
+        ),
+      puzzleGenerationTimeoutMs,
+    );
+  });
+  try {
+    return await Promise.race([generateValidPuzzle(deckMap), timeout]);
+  } finally {
+    if (timeoutHandle) clearTimeout(timeoutHandle);
   }
 }
 
@@ -173,19 +196,29 @@ export function calculateOffsetFromToday(date: Date) {
 if (!process.env.VITEST) {
   if (process.env.RUN_ONCE) {
     console.log("Running single generation (RUN_ONCE mode).");
-    start().then(() => {
-      console.log("Generation complete, exiting.");
-      process.exit(0);
-    });
+    start()
+      .then(() => {
+        console.log("Generation complete, exiting.");
+        process.exit(0);
+      })
+      .catch((err) => {
+        console.error("Generation failed:", err);
+        process.exit(1);
+      });
   } else {
-    schedule.scheduleJob("30 00 * * *", () => {
+    const cronSchedule = process.env.CRON_SCHEDULE ?? "30 00 * * *";
+    schedule.scheduleJob(cronSchedule, async () => {
       console.log("firing job");
-      start();
+      try {
+        await start();
+      } catch (err) {
+        console.error("Scheduled run failed:", err);
+      }
     });
 
-    console.log("Scheduled job to run nightly at midnight.");
+    console.log(`Scheduled job with cron '${cronSchedule}'.`);
     console.log("Current time: " + new Date().toLocaleString("en-US"));
     console.log("Running initial generation now.");
-    start();
+    start().catch((err) => console.error("Initial run failed:", err));
   }
 }
