@@ -57,8 +57,8 @@ async function generatePuzzles(puzzleCount: number, dayOffset: number) {
       [...puzzle.topRow, ...puzzle.sideRow],
     );
     console.log("\r\n\r\n");
-    console.log("Generating next puzzle...");
   }
+  console.log("Generation complete. Awaiting next cron trigger.");
 }
 
 async function generateValidPuzzleWithTimeout(
@@ -109,8 +109,16 @@ async function generateValidPuzzle(
       console.log(`Number of rerolls: ${rerollCount}`);
       rerollCount = 0;
     } else {
-      puzzle = rerollPuzzle(cloneMapOfDecks(deckMap), puzzle!);
       rerollCount++;
+      if (rerollCount % 1000 === 0) {
+        // Yield to macrotask queue so setTimeout-based timers (cron, timeout
+        // wrapper) can fire even during cache-hot reroll storms.
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
+        console.log(`${rerollCount} rerolls, trying fresh board type...`);
+        puzzle = griddening.generateRandomPuzzleBoard(cloneMapOfDecks(deckMap))!;
+      } else {
+        puzzle = rerollPuzzle(cloneMapOfDecks(deckMap), puzzle!);
+      }
     }
   }
   puzzle.topRow = shuffleArray<GameConstraint>(puzzle.topRow);
